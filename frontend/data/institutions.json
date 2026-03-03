@@ -1,0 +1,35 @@
+{
+    "0x969f0b3C4Bb7C80E33839F02F265373eE6Df969A": {
+        "name": "Universitas Insan Cita Indonesia (UICI)",
+        "shortName": "UICI",
+        "address": "Jl. Raya Pasar Minggu No.KM.18 No.7, Pejaten Timur, Pasar Minggu, Jakarta Selatan 12510",
+        "accreditation": "Terakreditasi",
+        "website": "https://uici.ac.id",
+        "email": "info@uici.ac.id",
+        "phone": "(021) 7975745",
+        "logo": "",
+        "verified": true
+    },
+    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8": {
+        "name": "Universitas Indonesia (UI)",
+        "shortName": "UI",
+        "address": "Kampus UI, Depok, Jawa Barat 16424",
+        "accreditation": "Akreditasi Unggul",
+        "website": "https://ui.ac.id",
+        "email": "humas@ui.ac.id",
+        "phone": "(021) 7867222",
+        "logo": "",
+        "verified": true
+    },
+    "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC": {
+        "name": "Institut Teknologi Bandung (ITB)",
+        "shortName": "ITB",
+        "address": "Jl. Ganesa No.10, Lb. Siliwangi, Coblong, Bandung 40132",
+        "accreditation": "Akreditasi Unggul",
+        "website": "https://itb.ac.id",
+        "email": "info@itb.ac.id",
+        "phone": "(022) 2500935",
+        "logo": "",
+        "verified": true
+    }
+}

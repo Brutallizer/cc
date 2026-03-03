@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CertiChain - Portal Verifikasi Ijazah untuk HRD/Perusahaan. Cek keaslian dokumen ijazah melalui blockchain.">
+    <title>CertiChain — Portal Verifikasi HRD</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#1e40af',
+                            600: '#1e3a8a',
+                            700: '#1e3380',
+                            800: '#172554',
+                            900: '#0f172a',
+                        },
+                        accent: {
+                            500: '#059669',
+                            600: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+
+    <!-- ============================================================ -->
+    <!-- NAVBAR -->
+    <!-- ============================================================ -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-primary-800 leading-tight">CertiChain</h1>
+                    <p class="text-xs text-gray-500">Blockchain Degree Verification</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="index.html"
+                    class="text-sm font-medium text-gray-500 hover:text-primary-500 transition-colors">Dashboard
+                    Admin</a>
+                <a href="verify.html"
+                    class="text-sm font-semibold text-primary-500 border-b-2 border-primary-500 pb-1">Portal
+                    Verifikasi</a>
+            </div>
+
+            <div id="connectionStatus"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-xs font-medium text-gray-500">
+                <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                Belum Terhubung
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================================ -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Portal Verifikasi Ijazah</h2>
+            <p class="text-gray-500">Masukkan data dari dokumen ijazah fisik/PDF untuk memverifikasi keasliannya di
+                blockchain.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- ============================================================ -->
+            <!-- FORM VERIFIKASI (Kolom Kiri, 2/3 lebar) -->
+            <!-- ============================================================ -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            Verifikasi Data Ijazah
+                        </h3>
+                    </div>
+
+                    <form id="verifyForm" class="px-6 py-5 space-y-5">
+                        <!-- Nama Lengkap -->
+                        <div>
+                            <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">Nama
+                                Lengkap</label>
+                            <input type="text" id="nama" placeholder="Masukkan nama sesuai ijazah"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                required>
+                        </div>
+
+                        <!-- NIM & Jurusan -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="nim" class="block text-sm font-medium text-gray-700 mb-1.5">NIM (Nomor Induk
+                                    Mahasiswa)</label>
+                                <input type="text" id="nim" placeholder="Masukkan NIM sesuai ijazah"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    required>
+                            </div>
+                            <div>
+                                <label for="jurusan" class="block text-sm font-medium text-gray-700 mb-1.5">Program
+                                    Studi</label>
+                                <input type="text" id="jurusan" placeholder="Masukkan jurusan sesuai ijazah"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- IPK & Tanggal Lahir -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1.5">IPK</label>
+                                <input type="text" id="ipk" placeholder="Masukkan IPK sesuai transkrip"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    required>
+                            </div>
+                            <div>
+                                <label for="tanggalLahir" class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal
+                                    Lahir</label>
+                                <input type="date" id="tanggalLahir"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Verifikasi -->
+                        <div class="pt-2">
+                            <button type="submit" id="btnVerify"
+                                class="w-full px-5 py-3 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Verifikasi Keaslian Ijazah
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- HASIL VERIFIKASI -->
+                <!-- ============================================================ -->
+                <div id="resultSection" class="mt-6 hidden">
+                    <!-- Akan diisi oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL INFO (Kolom Kanan) -->
+            <!-- ============================================================ -->
+            <div class="space-y-6">
+
+                <!-- Panduan untuk HRD -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900 text-sm">Panduan untuk HRD</h3>
+                    </div>
+                    <div class="px-6 py-5 space-y-4">
+                        <div class="flex gap-3">
+                            <div
+                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                1</div>
+                            <p class="text-xs text-gray-600 leading-relaxed">Ambil data dari <strong>dokumen ijazah
+                                    fisik</strong> atau <strong>file PDF</strong> yang diberikan pelamar.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div
+                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                2</div>
+                            <p class="text-xs text-gray-600 leading-relaxed">Masukkan data <strong>persis sama</strong>
+                                ke form di samping (Nama, NIM, Jurusan, IPK, Tanggal Lahir).</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div
+                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                3</div>
+                            <p class="text-xs text-gray-600 leading-relaxed">Klik <strong>"Verifikasi Keaslian
+                                    Ijazah"</strong>. Sistem akan mengecek blockchain.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div
+                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                4</div>
+                            <p class="text-xs text-gray-600 leading-relaxed">Hasil: <span
+                                    class="text-green-600 font-semibold">✅ VALID</span> (data cocok) atau <span
+                                    class="text-red-600 font-semibold">❌ TIDAK DITEMUKAN</span> (kemungkinan palsu).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catatan Penting -->
+                <div class="bg-amber-50 rounded-xl border border-amber-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-amber-100">
+                        <h3 class="font-semibold text-amber-800 text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                            Catatan Penting
+                        </h3>
+                    </div>
+                    <div class="px-6 py-4">
+                        <ul class="text-xs text-amber-700 space-y-2 list-disc list-inside leading-relaxed">
+                            <li>Data harus diinput <strong>persis sama</strong> dengan yang didaftarkan oleh admin
+                                kampus.</li>
+                            <li>Perbedaan satu karakter saja akan menghasilkan hash yang berbeda.</li>
+                            <li>Verifikasi ini bersifat <strong>gratis</strong> (tidak memerlukan gas fee).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Info Jaringan -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900 text-sm">Info Jaringan</h3>
+                    </div>
+                    <div class="px-6 py-5 space-y-3">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">Network</span>
+                            <span id="networkName" class="font-medium text-gray-700">-</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">Contract</span>
+                            <span id="contractAddr" class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================================ -->
+    <footer class="border-t border-gray-200 mt-12">
+        <div class="max-w-6xl mx-auto px-6 py-6 text-center">
+            <p class="text-xs text-gray-400">CertiChain &copy; 2026 — Tugas Akhir Sistem Informasi. Blockchain-based
+                Degree Verification System.</p>
+        </div>
+    </footer>
+
+    <!-- Ethers.js v6 via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+    <!-- Verify Logic -->
+    <script src="js/verify.js"></script>
+</body>
+
+</html>

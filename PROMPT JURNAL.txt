@@ -1,0 +1,192 @@
+﻿Abstract 
+  
+
+
+
+  Pemilihan Judul Yang Baik
+​​
+Tips Tambahan untuk Publikasi Informatika:
+1. Jangan Jual Laravel-nya: Di dunia akademik, Laravel hanyalah alat. Fokuslah pada metode (misal: Scrum, Prototyping) atau permasalahan (misal: sulitnya koordinasi dosen pembimbing).
+2. Gunakan Kata Kerja Operasional: Gunakan kata seperti "Optimasi", "Rancang Bangun", "Analisis Perbandingan", atau "Implementasi".
+3. Metode Pengujian: Pastikan ada bagian pengujian (Testing). Jurnal Informatika wajib memiliki data empiris apakah aplikasi berjalan baik atau tidak.
+
+
+PROMPT PEMILIHAN JUDUL YANG BAIK
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Dalam sesi ini, saya ingin menggunakan Anda sebagai supervisor saya yang sangat memahami tentang penulisan artikel penelitian. 
+Dalam sesi ini, saya ingin menggunakan Anda sebagai supervisor saya yang sangat memahami tentang penulisan artikel penelitian. Saya ingin Anda menyarankan judul untuk makalah dengan
+abstrak berikut:
+Proses manajemen tugas akhir di perguruan tinggi seringkali menghadapi kendala dalam hal efisiensi birokrasi, pemantauan progres mahasiswa, dan pengarsipan dokumen yang masih bersifat manual atau terfragmentasi. Penelitian ini bertujuan untuk merancang dan membangun Sistem Informasi Manajemen Tugas Akhir (SIMTA) berbasis website guna mengintegrasikan seluruh proses, mulai dari pengajuan judul hingga pendaftaran sidang. Sistem dikembangkan menggunakan kerangka kerja Laravel dengan pola arsitektur Model-View-Controller (MVC) untuk menjamin skalabilitas dan keamanan data. Metodologi pengembangan yang digunakan adalah [Sebutkan metode, misal: Waterfall / Agile Scrum]. Hasil pengujian menggunakan metode [Sebutkan metode uji, misal: Black Box Testing] menunjukkan bahwa seluruh fungsi sistem berjalan sesuai dengan kebutuhan fungsional. Selain itu, hasil uji [Sebutkan uji pengguna, misal: System Usability Scale (SUS)] menunjukkan skor sebesar [Angka], yang mengindikasikan bahwa sistem ini layak dan efektif dalam mempermudah koordinasi antara mahasiswa, dosen pembimbing, dan admin program studi dalam lingkup tugas akhir.
+	Larangan
+	Jangan jadikan pertanyaan sebagai judul.
+	Panjang
+	Berikan saya 5 saran.
+	
+
+
+
+Penulisan Pendahuluan  
+
+
+ 
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+Prompt ChatGPT untuk Membuat Pendahuluan Bagian General Background
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Pada sesi ini, saya ingin Anda sebagai pembimbing saya yang sangat memahami penulisan artikel penelitian. Saya ingin Anda membuat paragraf sebagai latar belakang umum pendahuluan. Gunakan kerangka berikut:
+
+
+1. Jelaskan apa itu Sistem Informasi Manajemen Tugas Akhir Berbasis Web
+2. Jelaskan Teknologi & Framework
+3. Jelaskan Kondisi Eksisting & Perangkat 
+4. Jelaskan tujuan penelitian yaitu membangun Sistem Informasi Manajemen Tugas Akhir
+	Larangan
+	Jangan membicarakan hal yang umum dengan konteks yang tidak jelas.
+	Panjang
+	Buatlah sebuah paragraf yang berisi 5 kalimat.
+	Tambahan
+	Gunakan kalimat-kalimat yang efektif saja, agar paragraf mudah dipahami.
+	
+
+
+
+Prompt ChatGPT untuk Membuat Pendahuluan Bagian Specific Background
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Dalam sesi ini, saya ingin Anda bertindak sebagai dosen pembimbing yang sangat memahami penulisan artikel ilmiah. Saya ingin Anda membuat satu paragraf sebagai bagian specific background pada bagian pendahuluan.
+Gunakan kerangka berikut:
+1. Jelaskan bahwa Sistem Informasi Manajemen Tugas Akhir berbasis web telah menjadi bidang penelitian yang penting di lingkungan perguruan tinggi.
+
+2. Jelaskan tantangan dalam pengelolaan tugas akhir yang masih menggunakan sistem manual atau semi-terintegrasi (dokumentasi manual, penyimpanan data tidak terpusat, keterbatasan monitoring progres, dan komunikasi yang tidak efisien).
+
+3. Jelaskan bahwa keterbatasan tersebut membuat pendekatan administrasi yang ada menjadi kurang efektif dan belum mampu mendukung seluruh siklus manajemen tugas akhir secara optimal.
+	Larangan
+	Jangan membicarakan hal yang umum dengan konteks yang tidak jelas.
+	Panjang
+	Buatlah sebuah paragraf yang berisi 5 kalimat.
+	Tambahan
+	Gunakan kalimat-kalimat yang efektif saja, agar paragraf mudah dipahami.
+	
+
+
+
+
+
+
+
+Prompt ChatGPT untuk Membuat Pendahuluan Bagian Knowledge Gap 
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Dalam sesi ini, saya ingin Anda bertindak sebagai dosen pembimbing yang sangat memahami penulisan artikel ilmiah. Saya ingin Anda membuat satu paragraf sebagai bagian knowledge gap pada pendahuluan.
+Gunakan kerangka berikut:
+   1. Jelaskan bahwa solusi umum dalam pengelolaan administrasi tugas akhir saat ini adalah hanya melakukan digitalisasi dokumen tanpa integrasi sistem secara menyeluruh.
+
+   2. Jelaskan bahwa digitalisasi parsial tersebut masih menyebabkan data yang terpisah, keterbatasan monitoring progres, serta koordinasi yang kurang efisien antara mahasiswa dan dosen pembimbing.
+
+   3. Jelaskan bahwa diperlukan peningkatan arsitektur sistem yang lebih terintegrasi, real-time, dan efisien untuk mendukung seluruh siklus manajemen tugas akhir.
+	Larangan
+	Jangan membicarakan hal yang umum dengan konteks yang tidak jelas.
+	Panjang
+	Buatlah sebuah paragraf yang berisi 5 kalimat.
+	Tambahan
+	Gunakan kalimat-kalimat yang efektif saja, agar paragraf mudah dipahami.
+	
+
+Prompt ChatGPT untuk Membuat Pendahuluan Bagian Here We Show
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Dalam sesi ini, saya ingin Anda bertindak sebagai dosen pembimbing yang sangat memahami penulisan artikel ilmiah. Saya ingin Anda menulis bagian “Here We Show” pada pendahuluan.
+Ikuti petunjuk berikut:
+Paragraf pertama: Jelaskan penelitian terkait. Bahas sistem informasi manajemen akademik. Jelaskan tantangan pengelolaan administrasi tugas akhir secara manual. Jelaskan penggunaan sistem berbasis web untuk monitoring progres. Jelaskan arsitektur sistem dan hubungannya dengan masalah integrasi data dan keterlambatan proses.
+Paragraf kedua: Jelaskan metode yang diusulkan. Deskripsikan konsep sistem informasi manajemen tugas akhir. Deskripsikan perancangan sistem berbasis web. Deskripsikan penggunaan framework Laravel dalam pengembangan sistem. Jelaskan pendekatan sistem terintegrasi untuk mendukung seluruh siklus tugas akhir.
+Paragraf ketiga: Jelaskan struktur artikel. Sebutkan bagian pendahuluan. Sebutkan penjelasan tentang sistem informasi manajemen tugas akhir. Sebutkan penjelasan tentang metode yang diusulkan. Sebutkan pengaturan pengujian sistem dan metodologi penelitian. Sebutkan pembahasan hasil implementasi dan kesimpulan.
+	Larangan
+	Jangan gunakan kalimat majemuk, agar paragraf mudah dipahami.
+	Panjang
+	Buat 3 paragraf, masing-masing berisi 5 kalimat.
+	Tambahan
+	Gunakan kalimat yang efektif dan aktif saja, agar paragraf mudah dipahami.
+	
+
+
+
+OUTPUT BACKGROUND
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+PEMBUATAN METODE 
+
+
+
+
+  
+
+
+
+PROMPT PEMBUATAN METODE
+
+
+Konteks :
+	Saya adalah mahasiswa S1 Informatika yang ingin membuat publikasi penelitian dari hasil eksperimen saya. Topik penelitian saya adalah Sistem Informasi Manajemen Tugas Akhir Berbasis Web.
+	Peran
+	Dalam sesi ini, saya ingin Anda bertindak sebagai dosen pembimbing yang sangat memahami penulisan artikel ilmiah. Saya ingin Anda membuat bagian Metode Penelitian untuk artikel saya.
+Gunakan kerangka berikut:
+      1. Jelaskan pendekatan pengembangan sistem yang digunakan dalam penelitian ini. Jelaskan alasan pemilihan metode tersebut.
+
+      2. Jelaskan konsep inti dari Sistem Informasi Manajemen Tugas Akhir Berbasis Web. Jelaskan arsitektur sistem. Jelaskan teknologi yang digunakan seperti framework Laravel dan basis data.
+
+      3. Tampilkan diagram alur atau pseudocode proses utama sistem. Jelaskan tahapan proses seperti pengajuan judul, bimbingan, monitoring progres, dan persetujuan akhir.
+	Larangan
+	Jangan membuat paragraf menjadi tidak efektif.
+	Panjang
+	Buat 3 paragraf.
+	Tambahan
+	Gunakan kalimat-kalimat yang efektif saja, agar paragraf mudah dipahami.
