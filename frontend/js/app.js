@@ -71,56 +71,103 @@ async function loadInstitutionsDB() {
     }
 }
 
-async function connectBlockchain() {
-    const savedPrivateKey = localStorage.getItem("certichain_admin_wallet");
+async function connectBlockchain(method = 'auto') {
+    let userAddress;
 
-    if (!savedPrivateKey) {
-        // Belum login, tampilkan overlay
+    if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('certichain_login_method') === 'metamask')) {
+        // --- JALUR METAMASK ---
+        if (typeof window.ethereum === "undefined") {
+            if (method === 'metamask') {
+                alert("MetaMask tidak terdeteksi! Silakan install ekstensi MetaMask di browser Anda.");
+            }
+            return;
+        }
+
+        try {
+            updateTxStatus("pending", "Menghubungkan ke jaringan MetaMask...");
+            // Minta akses wallet (akan memunculkan popup MetaMask)
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+            // Gunakan BrowserProvider dari Ethers v6
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+            userAddress = await signer.getAddress();
+
+            // Simpan preferensi login agar auto-reconnect
+            localStorage.setItem('certichain_login_method', 'metamask');
+            console.log("✅ Terhubung via MetaMask:", userAddress);
+
+            // Dengarkan perubahan akun
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length > 0) window.location.reload();
+                else {
+                    localStorage.removeItem('certichain_login_method');
+                    window.location.reload();
+                }
+            });
+
+        } catch (error) {
+            console.error("❌ Batal / Gagal terkoneksi MetaMask:", error);
+            if (method === 'metamask') {
+                updateTxStatus("error", "Koneksi MetaMask dibatalkan atau gagal.");
+            }
+            return;
+        }
+
+    } else if (method === 'google' || (method === 'auto' && localStorage.getItem("certichain_admin_wallet"))) {
+        // --- JALUR GOOGLE (SIMULASI SMART WALLET) ---
+        let savedPrivateKey = localStorage.getItem("certichain_admin_wallet");
+
+        if (!savedPrivateKey) {
+            if (method === 'google') {
+                // Di rilis publik ini, kita hardcode Private Key admin yang nantinya HARUS diisi saldo MATIC Testnet
+                savedPrivateKey = "0xc2701619eeb4142848d298211a7c88d26544dce27c1d1e4d211c717e8fc6375a";
+                localStorage.setItem("certichain_admin_wallet", savedPrivateKey);
+                localStorage.setItem('certichain_login_method', 'google');
+            } else {
+                document.getElementById("loginOverlay").classList.remove("hidden");
+                return;
+            }
+        }
+
+        try {
+            updateTxStatus("pending", "Menghubungkan ke jaringan Polygon Amoy...");
+            provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
+            signer = new ethers.Wallet(savedPrivateKey, provider);
+            userAddress = await signer.getAddress();
+            localStorage.setItem('certichain_login_method', 'google');
+
+            console.log("✅ Terhubung via Smart Wallet (Google Auth)");
+            console.log("   Admin address:", userAddress);
+        } catch (error) {
+            console.error("❌ Gagal load Smart Wallet:", error);
+            updateTxStatus("error", "Gagal load sesi login.");
+            return;
+        }
+    } else {
+        // Belum login apapun
         document.getElementById("loginOverlay").classList.remove("hidden");
         return;
     }
 
-    // Sembunyikan overlay login
+    // --- BAGIAN UMUM (Berlaku untuk MetaMask & Google) ---
     document.getElementById("loginOverlay").classList.add("hidden");
 
     try {
-        updateTxStatus("pending", "Menghubungkan ke jaringan blockchain Polygon Amoy...");
-
-        // 1. Hubungkan ke RPC Provider Polygon Amoy (Public Node)
-        provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
-
-        // 2. Load wallet dari private key yang tersimpan (Simulasi Smart Wallet)
-        signer = new ethers.Wallet(savedPrivateKey, provider);
-
-        console.log("✅ Terhubung via Smart Wallet (Account Abstraction)");
-        console.log("   Admin address:", await signer.getAddress());
-
-        // Buat instance smart contract
         contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-        // Update UI status koneksi
         updateConnectionStatus(true);
         updateNetworkInfo();
-
-        // --- Load Profil Kampus dari JSON ---
         await loadInstitutionsDB();
 
-        // --- CEK INSTITUTIONAL IDENTITY ---
-        const myAddress = await signer.getAddress();
-        const myInstitutionName = await contract.institutions(myAddress);
+        const myInstitutionName = await contract.institutions(userAddress);
         const navInstEl = document.getElementById("navInstitutionName");
         const bannerEl = document.getElementById("bannerNotRegistered");
         const profileCardEl = document.getElementById("institutionProfileCard");
 
         if (myInstitutionName && myInstitutionName !== "") {
-            // Wallet SUDAH terdaftar sebagai kampus on-chain
-            // Cari profil lengkap dari JSON off-chain
-            const profile = institutionsDB[myAddress] || null;
-
+            const profile = institutionsDB[userAddress] || null;
             if (navInstEl) navInstEl.textContent = profile ? profile.shortName : myInstitutionName;
             if (bannerEl) bannerEl.classList.add("hidden");
-
-            // Tampilkan kartu profil institusi di sidebar
             if (profileCardEl && profile) {
                 profileCardEl.classList.remove("hidden");
                 document.getElementById("profileCampusName").textContent = profile.name;
@@ -130,46 +177,32 @@ async function connectBlockchain() {
                 document.getElementById("profileCampusWeb").href = profile.website;
                 document.getElementById("profileCampusEmail").textContent = profile.email;
             }
-
-            updateTxStatus("success", `Login berhasil. Identitas Kampus: ${myInstitutionName}`);
+            updateTxStatus("success", `Login berhasil. Identitas: ${myInstitutionName}`);
         } else {
-            // Wallet BELUM terdaftar → tampilkan peringatan
-            if (navInstEl) navInstEl.textContent = "\u26a0 Belum Terdaftar";
+            if (navInstEl) navInstEl.textContent = "⚠️ Belum Terdaftar";
             if (bannerEl) bannerEl.classList.remove("hidden");
             if (profileCardEl) profileCardEl.classList.add("hidden");
-            updateTxStatus("error", "Wallet Anda belum terdaftar sebagai institusi kampus. Hubungi Super Admin.");
+            updateTxStatus("error", "Wallet Anda belum terdaftar sebagai institusi kampus.");
         }
-
-    } catch (error) {
-        console.error("\u274c Gagal terhubung:", error);
-        updateTxStatus("error", "Gagal terhubung. Pastikan jaringan beroperasi.");
+    } catch (e) {
+        console.error("❌ Gagal verifikasi contract:", e);
+        updateTxStatus("error", "Gagal memverifikasi status kampus di blockchain.");
     }
 }
 
 // ============================================================
 // EVENT LISTENER: GOOGLE LOGIN (SIMULASI)
 // ============================================================
-const btnGoogleLogin = document.getElementById("btnGoogleLogin");
-if (btnGoogleLogin) {
-    btnGoogleLogin.addEventListener("click", () => {
-        // Tampilkan loading spinner
+const btnGoogleLoginInit = document.getElementById("btnGoogleLogin");
+if (btnGoogleLoginInit) {
+    btnGoogleLoginInit.addEventListener("click", () => {
         document.getElementById("loginText").textContent = "Authenticating...";
         document.getElementById("loginSpinner").classList.remove("hidden");
-        btnGoogleLogin.disabled = true;
+        btnGoogleLoginInit.disabled = true;
 
-        // Simulasi proses OAuth delay (2 detik)
         setTimeout(() => {
-            // Generate Dompet Baru Secata Otomatis (Account Abstraction)
-            // Di rilis publik ini, kita hardcode Private Key admin yang nantinya HARUS diisi saldo MATIC Testnet
-            // Untuk Localhost Testing, gunakan Private Key Account #0 Hardhat (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266)
-            const DUMMY_FUNDED_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-
-            // Simpan private key di browser
-            localStorage.setItem("certichain_admin_wallet", DUMMY_FUNDED_PRIVATE_KEY);
-
-            // Lanjutkan koneksi
-            connectBlockchain();
-        }, 2000);
+            connectBlockchain('google');
+        }, 1500);
     });
 }
 
