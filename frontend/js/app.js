@@ -88,6 +88,43 @@ async function connectBlockchain(method = 'auto') {
             // Minta akses wallet (akan memunculkan popup MetaMask)
             await window.ethereum.request({ method: 'eth_requestAccounts' });
 
+            // --- AUTO SWITCH CHAIN KE POLYGON AMOY (Chain ID: 80002 / 0x13882) ---
+            const targetChainId = '0x13882';
+            const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+            if (currentChainId !== targetChainId) {
+                try {
+                    updateTxStatus("pending", "Beralih ke Polygon Amoy Testnet...");
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: targetChainId }],
+                    });
+                } catch (switchError) {
+                    // Jika jaringan belum ditambahkan ke MetaMask (Error 4902)
+                    if (switchError.code === 4902) {
+                        try {
+                            updateTxStatus("pending", "Menambahkan jaringan Polygon Amoy...");
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [
+                                    {
+                                        chainId: targetChainId,
+                                        chainName: 'Polygon Amoy Testnet',
+                                        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+                                        rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+                                        blockExplorerUrls: ['https://amoy.polygonscan.com/']
+                                    }
+                                ]
+                            });
+                        } catch (addError) {
+                            throw new Error("Gagal menambahkan Polygon Amoy ke MetaMask.");
+                        }
+                    } else {
+                        throw new Error("Batal beralih ke jaringan jaringan Polygon Amoy.");
+                    }
+                }
+            }
+
             // Gunakan BrowserProvider dari Ethers v6
             provider = new ethers.BrowserProvider(window.ethereum);
             signer = await provider.getSigner();
