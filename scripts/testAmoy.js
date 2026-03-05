@@ -5,15 +5,15 @@ async function testE2E() {
     console.log("   CERTICHAIN AMOY E2E INTEGRATION TEST ");
     console.log("=========================================");
 
-    const provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
-    // Alamat yg tadi di-deploy
-    const CONTRACT_ADDRESS = "0x6116D452af7a014576BD50aeFfce9586D040D57E";
-    const PRIVATE_KEY = "0xc2701619eeb4142848d298211a7c88d26544dce27c1d1e4d211c717e8fc6375a"; // Private key admin tester
+    const provider = new ethers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+    // Alamat V2 yang baru di-deploy
+    const CONTRACT_ADDRESS = "0xF20276816FDEb9f76Bd385086CEB8e44826B689b";
+    const PRIVATE_KEY = process.env.PRIVATE_KEY; // Gunakan .env agar aman
     const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 
     const ABI = [
         "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher)",
-        "function institutions(address) view returns(string)",
+        "function institutions(address) view returns(string name, uint8 status)",
         "function storeHash(bytes32 _hash)"
     ];
 
