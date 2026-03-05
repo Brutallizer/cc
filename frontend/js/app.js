@@ -14,7 +14,7 @@
 // KONFIGURASI
 // ============================================================
 
-const CONTRACT_ADDRESS = "0x6116D452af7a014576BD50aeFfce9586D040D57E"; // <--- Polygon Amoy Testnet
+const CONTRACT_ADDRESS = "0xF20276816FDEb9f76Bd385086CEB8e44826B689b"; // <--- CertiChain V2 - Polygon Amoy
 
 /**
  * ABI (Application Binary Interface) dari smart contract CertiChain.
@@ -28,19 +28,20 @@ const CONTRACT_ADDRESS = "0x6116D452af7a014576BD50aeFfce9586D040D57E"; // <--- P
  *   Tidak perlu menyertakan seluruh ABI dari compiler output.
  */
 const CONTRACT_ABI = [
-    // Fungsi registerInstitution (dipanggil admin/simulasi)
-    "function registerInstitution(address _wallet, string memory _name) public",
-    // Fungsi mendapatkan nama institusi dari address
-    "function institutions(address) view returns (string)",
-    // Fungsi storeHash (satu per satu)
+    // Info status & nama (Struct)
+    "function institutions(address) view returns (string name, uint8 status)",
+    // Alamat admin (Kementerian)
+    "function admin() view returns (address)",
+    // Fungsi penyimpanan & verifikasi
     "function storeHash(bytes32 _hash)",
-    // Fungsi storeMultipleHashes (bulk import)
     "function storeMultipleHashes(bytes32[] calldata _hashes)",
-    // Fungsi verifyHash (mengembalikan 3 nilai: bool, string, address)
     "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher)",
-    // Event HashStored & InstitutionRegistered
-    "event HashStored(bytes32 indexed hash, address indexed publisher, uint256 timestamp)",
-    "event InstitutionRegistered(address indexed wallet, string name)"
+    // Fungsi untuk Dashboard Kementerian
+    "function getAllApplicants() view returns (address[])",
+    "function approveInstitution(address _wallet)",
+    "function rejectInstitution(address _wallet)",
+    // Event
+    "event HashStored(bytes32 indexed hash, address indexed publisher, uint256 timestamp)"
 ];
 
 // ============================================================
@@ -196,36 +197,204 @@ async function connectBlockchain(method = 'auto') {
         updateNetworkInfo();
         await loadInstitutionsDB();
 
-        const myInstitutionName = await contract.institutions(userAddress);
+        const superAdminAddress = await contract.admin();
+        const isSuperAdmin = (userAddress.toLowerCase() === superAdminAddress.toLowerCase());
+
         const navInstEl = document.getElementById("navInstitutionName");
         const bannerEl = document.getElementById("bannerNotRegistered");
         const profileCardEl = document.getElementById("institutionProfileCard");
+        const dashInstitusi = document.getElementById("dashboardInstitusi");
+        const dashKementerian = document.getElementById("dashboardKementerian");
 
-        if (myInstitutionName && myInstitutionName !== "") {
-            const profile = institutionsDB[userAddress] || null;
-            if (navInstEl) navInstEl.textContent = profile ? profile.shortName : myInstitutionName;
+        if (isSuperAdmin) {
+            // ROLE 1: KEMENTERIAN PENDIDIKAN
+            if (navInstEl) navInstEl.textContent = "Super Admin (Kementerian)";
             if (bannerEl) bannerEl.classList.add("hidden");
-            if (profileCardEl && profile) {
-                profileCardEl.classList.remove("hidden");
-                document.getElementById("profileCampusName").textContent = profile.name;
-                document.getElementById("profileCampusAddr").textContent = profile.address;
-                document.getElementById("profileCampusAccred").textContent = profile.accreditation;
-                document.getElementById("profileCampusWeb").textContent = profile.website;
-                document.getElementById("profileCampusWeb").href = profile.website;
-                document.getElementById("profileCampusEmail").textContent = profile.email;
-            }
-            updateTxStatus("success", `Login berhasil. Identitas: ${myInstitutionName}`);
-        } else {
-            if (navInstEl) navInstEl.textContent = "⚠️ Belum Terdaftar";
-            if (bannerEl) bannerEl.classList.remove("hidden");
             if (profileCardEl) profileCardEl.classList.add("hidden");
-            updateTxStatus("error", "Wallet Anda belum terdaftar sebagai institusi kampus.");
+
+            // Tampilkan Dashboard Super Admin, sembunyikan Dashboard Normal
+            if (dashInstitusi) dashInstitusi.classList.add("hidden");
+            if (dashKementerian) dashKementerian.classList.remove("hidden");
+
+            updateTxStatus("success", `Login berhasil sebagai Kementerian Pusat.`);
+
+            // Load antrian kampus
+            loadKementerianDashboard();
+
+        } else {
+            // ROLE 2: KAMPUS NORMAL
+            if (dashKementerian) dashKementerian.classList.add("hidden");
+
+            const instData = await contract.institutions(userAddress);
+            const instName = instData[0];
+            const instStatus = Number(instData[1]); // Enum (0=NotReg, 1=Pending, 2=Approved, 3=Rejected)
+
+            if (instStatus === 2) { // Approved
+                const profile = institutionsDB[userAddress] || null;
+                if (navInstEl) navInstEl.textContent = profile ? profile.shortName : instName;
+                if (bannerEl) bannerEl.classList.add("hidden");
+                if (dashInstitusi) dashInstitusi.classList.remove("hidden");
+
+                if (profileCardEl && profile) {
+                    profileCardEl.classList.remove("hidden");
+                    document.getElementById("profileCampusName").textContent = profile.name;
+                    document.getElementById("profileCampusAddr").textContent = profile.address;
+                    document.getElementById("profileCampusAccred").textContent = profile.accreditation;
+                    document.getElementById("profileCampusWeb").textContent = profile.website;
+                    document.getElementById("profileCampusWeb").href = profile.website;
+                    document.getElementById("profileCampusEmail").textContent = profile.email;
+                }
+                updateTxStatus("success", `Login berhasil. Identitas: ${instName}`);
+            } else {
+                // Pending, Rejected, NotReg
+                if (navInstEl) navInstEl.textContent = "⚠️ Akses Dibatasi";
+                if (bannerEl) bannerEl.classList.remove("hidden");
+                if (profileCardEl) profileCardEl.classList.add("hidden");
+                if (dashInstitusi) dashInstitusi.classList.add("hidden");
+
+                let msg = "Wallet gagal memuat data.";
+                if (instStatus === 0) msg = "Wallet belum didaftarkan sebagai institusi.";
+                if (instStatus === 1) msg = "Pendaftaran Institusi Anda masih PENDING dan menunggu persetujuan Kementerian.";
+                if (instStatus === 3) msg = "Pendaftaran Institusi Anda telah ditolak Kementerian.";
+
+                updateTxStatus("error", msg);
+
+                if (instStatus === 0 || instStatus === 3) {
+                    // Beri tombol pendaftaran di banner
+                    if (bannerEl) {
+                        bannerEl.innerHTML += `<div class="ml-auto"><a href="register.html" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition">Daftar Sekarang</a></div>`;
+                    }
+                }
+            }
         }
     } catch (e) {
         console.error("❌ Gagal verifikasi contract:", e);
         updateTxStatus("error", "Gagal memverifikasi status kampus di blockchain.");
     }
 }
+
+// ============================================================
+// DASHBOARD KEMENTERIAN / SUPER ADMIN LOGIC
+// ============================================================
+async function loadKementerianDashboard() {
+    try {
+        const tableBody = document.getElementById("approvalTableBody");
+        if (!tableBody) return;
+
+        const applicants = await contract.getAllApplicants();
+        if (applicants.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Belum ada pengajuan kampus saat ini.</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        let pendingCount = 0;
+        let approvedCount = 0;
+
+        // Ambil pending DB dari simulasi B2B lokal
+        const localDB = JSON.parse(localStorage.getItem('certichain_pending_db') || "{}");
+
+        for (let i = 0; i < applicants.length; i++) {
+            const wallet = applicants[i];
+            const data = await contract.institutions(wallet);
+            const statusInt = Number(data[1]);
+            const onchainName = data[0];
+
+            let badgeHtml = '';
+            let isActionable = false;
+
+            if (statusInt === 1) { // Pending
+                badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-yellow-700 bg-yellow-100 rounded-full">Antrean (Pending)</span>';
+                isActionable = true;
+                pendingCount++;
+            } else if (statusInt === 2) { // Approved
+                badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-green-700 bg-green-100 rounded-full">Terdaftar (Approved)</span>';
+                approvedCount++;
+            } else if (statusInt === 3) { // Rejected
+                badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-700 bg-red-100 rounded-full">Ditolak</span>';
+            }
+
+            // Gabungkan metadata detail dari JSON (institutionsDB) atau pending lokal (localDB)
+            let detailData = localDB[wallet] || institutionsDB[wallet] || {};
+            let theName = detailData.name || onchainName || "Institusi Anonim";
+            let webEmail = '<span class="text-xs text-gray-400">Data legalitas offchain tidak ditemukan</span>';
+
+            if (detailData.sk) {
+                webEmail = `<div class="text-[11px] text-gray-500 mt-1 flex gap-2"><span>SK: ${detailData.sk}</span> &bull; <span>${detailData.akreditasi || '-'}</span></div>`;
+            }
+
+            html += `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                    <p class="font-medium text-gray-900">${theName}</p>
+                    ${webEmail}
+                </td>
+                <td class="px-6 py-4">
+                    <span class="font-mono text-[11px] text-gray-600 bg-gray-100 px-2 py-1 rounded truncate max-w-[120px] block" title="${wallet}">${wallet.slice(0, 8)}...${wallet.slice(-6)}</span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    ${badgeHtml}
+                </td>
+                <td class="px-6 py-4 text-right">
+                    ${isActionable ? `
+                        <button onclick="actionApprove('${wallet}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Approve</button>
+                        <button onclick="actionReject('${wallet}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Tolak</button>
+                    ` : `
+                        <span class="text-[11px] text-gray-400 font-medium">Selesai</span>
+                    `}
+                </td>
+            </tr>`;
+        }
+
+        tableBody.innerHTML = html;
+        if (document.getElementById("statPending")) document.getElementById("statPending").textContent = pendingCount;
+        if (document.getElementById("statApproved")) document.getElementById("statApproved").textContent = approvedCount;
+
+    } catch (e) {
+        console.error("Gagal load antrian kementerian", e);
+    }
+}
+
+// Fungsi Approval dipanggil dari UI Tabel
+window.actionApprove = async function (wallet) {
+    if (!confirm('Yakin ingin menerima institusi ini mengakses CertiChain?')) return;
+    try {
+        updateTxStatus('pending', 'Mengirim transaksi persetujuan...');
+        const tx = await contract.approveInstitution(wallet);
+
+        updateTxStatus('pending', 'Menunggu konfirmasi blockchain...');
+        await tx.wait();
+
+        updateTxStatus('success', 'Institusi berhasil diapprove!');
+        // Pindahkan data JSON dr Antrian ke Data Resmi (Simulasi)
+        let localDB = JSON.parse(localStorage.getItem('certichain_pending_db') || "{}");
+        if (localDB[wallet]) {
+            institutionsDB[wallet] = localDB[wallet];
+            institutionsDB[wallet].verified = true;
+            delete localDB[wallet];
+            localStorage.setItem('certichain_pending_db', JSON.stringify(localDB));
+        }
+
+        loadKementerianDashboard(); // reload table
+    } catch (e) {
+        console.error("Approve error:", e);
+        updateTxStatus('error', 'Gagal memproses approval.');
+    }
+};
+
+window.actionReject = async function (wallet) {
+    if (!confirm('Yakin ingin menolak pendaftaran institusi ini?')) return;
+    try {
+        updateTxStatus('pending', 'Memprose penolakan (Reject)...');
+        const tx = await contract.rejectInstitution(wallet);
+        await tx.wait();
+
+        updateTxStatus('success', 'Aplikasi berhasil ditolak.');
+        loadKementerianDashboard();
+    } catch (e) {
+        updateTxStatus('error', 'Gagal memproses penolakan.');
+    }
+};
 
 // ============================================================
 // EVENT LISTENER: GOOGLE LOGIN (SIMULASI)

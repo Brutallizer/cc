@@ -1,191 +1,181 @@
-/**
- * Unit Test untuk Smart Contract CertiChain
- * 
- * FUNGSI:
- * Memastikan semua fungsi smart contract bekerja dengan benar
- * sebelum di-deploy ke testnet/mainnet.
- * 
- * CARA JALANKAN:
- * npx hardhat test
- */
-
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("CertiChain", function () {
+describe("CertiChain V2", function () {
 
-    let certichain;  // Instance smart contract
-    let admin;       // Akun admin (deployer)
-    let otherUser;   // Akun non-admin (untuk test access control)
+    let certichain;
+    let admin;
+    let kampus1;
+    let kampus2;
 
-    /**
-     * beforeEach: Dijalankan sebelum SETIAP test case.
-     * Deploy contract baru agar setiap test dimulai dari state bersih.
-     */
+    // Status Enum mapping for easy checking
+    const Status = {
+        NotRegistered: 0n,
+        Pending: 1n,
+        Approved: 2n,
+        Rejected: 3n
+    };
+
     beforeEach(async function () {
-        // Ambil dua akun test dari Hardhat
-        [admin, otherUser] = await ethers.getSigners();
+        [admin, kampus1, kampus2] = await ethers.getSigners();
 
-        // Deploy contract CertiChain
         const CertiChain = await ethers.getContractFactory("CertiChain");
         certichain = await CertiChain.deploy();
         await certichain.waitForDeployment();
     });
 
-    // ============================================================
-    // TEST: Deployment & Registration
-    // ============================================================
-    describe("Deployment & Registration", function () {
-        it("Harus menetapkan deployer sebagai admin", async function () {
-            // Cek apakah admin address di contract = deployer address
+    describe("1. Deployment & Roles", function () {
+        it("Harus menetapkan deployer sebagai admin kementerian", async function () {
             expect(await certichain.admin()).to.equal(admin.address);
         });
+    });
 
-        it("Admin harus bisa mendaftarkan institusi baru", async function () {
-            await certichain.registerInstitution(admin.address, "Universitas Testing");
-            const name = await certichain.institutions(admin.address);
-            expect(name).to.equal("Universitas Testing");
+    describe("2. Self-Service Registration Workflow", function () {
+        it("Harus memperbolehkan siapapun untuk applyForRegistration (Status jadi Pending)", async function () {
+            await expect(certichain.connect(kampus1).applyForRegistration("Universitas Telkom"))
+                .to.emit(certichain, "RegistrationApplied")
+                .withArgs(kampus1.address, "Universitas Telkom");
+
+            const req = await certichain.institutions(kampus1.address);
+            expect(req.name).to.equal("Universitas Telkom");
+            expect(req.status).to.equal(Status.Pending);
         });
 
-        it("Non-admin tidak boleh mendaftarkan institusi", async function () {
-            await expect(certichain.connect(otherUser).registerInstitution(otherUser.address, "Hacker Univ"))
-                .to.be.revertedWith("CertiChain: Hanya admin yang dapat menyimpan hash");
+        it("Tidak memperbolehkan apply jika sudah Pending atau Approved", async function () {
+            await certichain.connect(kampus1).applyForRegistration("Universitas A");
+
+            await expect(certichain.connect(kampus1).applyForRegistration("Universitas Baru"))
+                .to.be.revertedWith("CertiChain: Wallet Anda sudah terdaftar atau dalam antrean Pending");
+        });
+
+        it("Harus menambahkan alamat pelamar ke array allApplicants", async function () {
+            await certichain.connect(kampus1).applyForRegistration("Kampus A");
+            await certichain.connect(kampus2).applyForRegistration("Kampus B");
+
+            const applicants = await certichain.getAllApplicants();
+            expect(applicants.length).to.equal(2);
+            expect(applicants[0]).to.equal(kampus1.address);
+            expect(applicants[1]).to.equal(kampus2.address);
         });
     });
 
-    // ============================================================
-    // TEST: Store Hash (Simpan Hash)
-    // ============================================================
-    describe("Store Hash", function () {
+    describe("3. Kementerian Approval Workflow", function () {
         beforeEach(async function () {
-            // Daftarkan admin sbg institusi sebelum test storeHash jalan
-            await certichain.registerInstitution(admin.address, "Universitas Indonesia");
+            await certichain.connect(kampus1).applyForRegistration("Institut Pertanian Bogor");
+            await certichain.connect(kampus2).applyForRegistration("Kampus Abal Abal");
         });
 
-        it("Admin yang terdaftar harus bisa menyimpan hash baru", async function () {
-            // Buat contoh hash (simulasi SHA-256 dari data mahasiswa)
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("John Doe|12345|Sistem Informasi|3.85|2000-01-15"));
+        it("Hanya Admin yang bisa meng-approve (mengubah status ke Approved)", async function () {
+            await expect(certichain.approveInstitution(kampus1.address))
+                .to.emit(certichain, "InstitutionApproved")
+                .withArgs(kampus1.address, "Institut Pertanian Bogor");
 
-            // Simpan hash ke blockchain dan cek event
-            const tx = await certichain.storeHash(testHash);
-            await tx.wait();
-
-            // Pastikan event HashStored ter-emit
-            await expect(tx).to.emit(certichain, "HashStored");
+            const inst = await certichain.institutions(kampus1.address);
+            expect(inst.status).to.equal(Status.Approved);
         });
 
-        it("Gagal jika institusi belum terdaftar (meskipun dia admin)", async function () {
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("Unregistered"));
+        it("Hanya Admin yang bisa menolak / reject", async function () {
+            await expect(certichain.rejectInstitution(kampus2.address))
+                .to.emit(certichain, "InstitutionRejected")
+                .withArgs(kampus2.address, "Kampus Abal Abal");
 
-            // Kita pakai contract baru dimana admin belum diregister
-            const CertiChain = await ethers.getContractFactory("CertiChain");
-            const newContract = await CertiChain.deploy();
-
-            await expect(newContract.storeHash(testHash))
-                .to.be.revertedWith("CertiChain: Alamat Anda belum terdaftar sebagai institusi");
+            const inst = await certichain.institutions(kampus2.address);
+            expect(inst.status).to.equal(Status.Rejected);
         });
 
-        it("Harus gagal jika hash sudah tersimpan (duplikat)", async function () {
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("Duplicate Test"));
-
-            // Simpan hash pertama kali → sukses
-            await certichain.storeHash(testHash);
-
-            // Simpan hash yang sama lagi → harus GAGAL
-            await expect(certichain.storeHash(testHash))
-                .to.be.revertedWith("CertiChain: Hash sudah tersimpan sebelumnya");
+        it("Non-admin tidak bisa approve", async function () {
+            await expect(certichain.connect(kampus2).approveInstitution(kampus1.address))
+                .to.be.revertedWith("CertiChain: Akses ditolak. Hanya Kementerian (Super Admin) yang diizinkan.");
         });
 
-        it("Gagal menyimpan hash public jika belum terdaftar institusi", async function () {
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("Unauthorized Test"));
+        it("Kampus yang di-reject bisa applyForRegistration lagi", async function () {
+            await certichain.rejectInstitution(kampus2.address);
 
-            // otherUser mencoba menyimpan hash → harus GAGAL karena belum terdaftar di `institutions`
-            await expect(certichain.connect(otherUser).storeHash(testHash))
-                .to.be.revertedWith("CertiChain: Alamat Anda belum terdaftar sebagai institusi");
+            // Reject -> Pending
+            await certichain.connect(kampus2).applyForRegistration("Kampus Abal Abal Fix");
+            const req = await certichain.institutions(kampus2.address);
+            expect(req.status).to.equal(Status.Pending);
+        });
+
+        it("Admin bisa bypass antrian dengan mendaftarkan langsung secara manual", async function () {
+            await certichain.registerInstitutionDirectly(admin.address, "Kementerian Pusat");
+            const req = await certichain.institutions(admin.address);
+            expect(req.status).to.equal(Status.Approved);
         });
     });
 
-    // ============================================================
-    // TEST: Bulk Store Hashes
-    // ============================================================
-    describe("Bulk Store Hashes", function () {
+    describe("4. Simpan Hash Ijazah (Hanya Kampus Ter-Approve)", function () {
+        const testHash = ethers.keccak256(ethers.toUtf8Bytes("Ijazah123"));
+
         beforeEach(async function () {
-            await certichain.registerInstitution(admin.address, "Universitas Indonesia");
+            // Setup Kampus 1 (Approved)
+            await certichain.connect(kampus1).applyForRegistration("ITB");
+            await certichain.approveInstitution(kampus1.address);
+
+            // Setup Kampus 2 (Pending - belum approve)
+            await certichain.connect(kampus2).applyForRegistration("Kampus Baru");
         });
 
-        it("Admin terdaftar harus bisa menyimpan banyak hash sekaligus", async function () {
-            const hash1 = ethers.keccak256(ethers.toUtf8Bytes("Mahasiswa 1"));
-            const hash2 = ethers.keccak256(ethers.toUtf8Bytes("Mahasiswa 2"));
-            const hash3 = ethers.keccak256(ethers.toUtf8Bytes("Mahasiswa 3"));
-
-            const hashes = [hash1, hash2, hash3];
-
-            // Simpan semua hash sekaligus
-            const tx = await certichain.storeMultipleHashes(hashes);
-            await tx.wait();
-
-            // Verifikasi bahwa semua hash berhasil tersimpan
-            const res1 = await certichain.verifyHash(hash1);
-            expect(res1[0]).to.equal(true);
-            const res2 = await certichain.verifyHash(hash2);
-            expect(res2[0]).to.equal(true);
-            const res3 = await certichain.verifyHash(hash3);
-            expect(res3[0]).to.equal(true);
+        it("Kampus dengan status Approved bisa menyimpan Hash", async function () {
+            await expect(certichain.connect(kampus1).storeHash(testHash))
+                .to.emit(certichain, "HashStored")
+                .withArgs(testHash, kampus1.address, await ethers.provider.getBlock("latest").then(b => b.timestamp + 1));
         });
 
-        it("Harus mengabaikan hash duplikat saat bulk store", async function () {
-            const hash1 = ethers.keccak256(ethers.toUtf8Bytes("Simpan Dulu"));
-            const hash2 = ethers.keccak256(ethers.toUtf8Bytes("Baru"));
+        it("Kampus dengan status Pending TIDAK BISA menyimpan Hash", async function () {
+            await expect(certichain.connect(kampus2).storeHash(testHash))
+                .to.be.revertedWith("CertiChain: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi.");
+        });
 
-            await certichain.storeHash(hash1);
-
-            const hashes = [hash1, hash2];
-            const tx = await certichain.storeMultipleHashes(hashes);
-            await tx.wait();
-
-            const result = await certichain.verifyHash(hash2);
-            expect(result[0]).to.equal(true);
+        it("Tidak bisa menyimpan Hash duplikat", async function () {
+            await certichain.connect(kampus1).storeHash(testHash);
+            await expect(certichain.connect(kampus1).storeHash(testHash))
+                .to.be.revertedWith("CertiChain: Hash Ijazah sudah tersimpan sebelumnya");
         });
     });
 
-    // ============================================================
-    // TEST: Verify Hash (Verifikasi Hash & Nama Kampus)
-    // ============================================================
-    describe("Verify Hash", function () {
+    describe("5. Bulk Store dan Verifikasi Ijazah", function () {
+        const testHash1 = ethers.keccak256(ethers.toUtf8Bytes("Murid 1"));
+        const testHash2 = ethers.keccak256(ethers.toUtf8Bytes("Murid 2"));
+        const testHash3 = ethers.keccak256(ethers.toUtf8Bytes("Murid 3"));
+
         beforeEach(async function () {
-            await certichain.registerInstitution(admin.address, "Universitas Indonesia");
+            await certichain.registerInstitutionDirectly(kampus1.address, "Kampus Hebat");
         });
 
-        it("Harus mengembalikan TRUE, Nama Kampus, dan Address untuk hash yang tersimpan", async function () {
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("Valid Certificate"));
+        it("Batch Simpan Hash berhasil dan mem-bypass duplikat", async function () {
+            // Simpan hash1 lebih dulu
+            await certichain.connect(kampus1).storeHash(testHash1);
 
-            await certichain.storeHash(testHash);
+            // Coba simpan 1, 2, 3 sekaligus (1 adalah duplikat)
+            await certichain.connect(kampus1).storeMultipleHashes([testHash1, testHash2, testHash3]);
 
-            const [isValid, campusName, publisher] = await certichain.verifyHash(testHash);
+            const res1 = await certichain.verifyHash(testHash1);
+            expect(res1[0]).to.be.true;
 
-            expect(isValid).to.equal(true);
-            expect(campusName).to.equal("Universitas Indonesia");
-            expect(publisher).to.equal(admin.address);
+            const res2 = await certichain.verifyHash(testHash2);
+            expect(res2[0]).to.be.true;
+
+            const res3 = await certichain.verifyHash(testHash3);
+            expect(res3[0]).to.be.true;
         });
 
-        it("Harus mengembalikan FALSE dan data kosong untuk hash yang BELUM tersimpan", async function () {
-            const fakeHash = ethers.keccak256(ethers.toUtf8Bytes("Fake Certificate"));
+        it("Siapa saja bisa memverifikasi hash secara akurat (Publik / Tanpa Login)", async function () {
+            await certichain.connect(kampus1).storeHash(testHash2);
 
-            const [isValid, campusName, publisher] = await certichain.verifyHash(fakeHash);
+            // Verifikasi menggunakan wallet admin (Public Actor)
+            const [isValid, name, publisher] = await certichain.verifyHash(testHash2);
+            expect(isValid).to.be.true;
+            expect(name).to.equal("Kampus Hebat");
+            expect(publisher).to.equal(kampus1.address);
+        });
 
-            expect(isValid).to.equal(false);
-            expect(campusName).to.equal("");
+        it("Has tidak valid diproses dengan elegan (Tidak error/revert)", async function () {
+            const fakeHash = ethers.keccak256(ethers.toUtf8Bytes("Fake"));
+            const [isValid, name, publisher] = await certichain.verifyHash(fakeHash);
+            expect(isValid).to.be.false;
+            expect(name).to.equal("");
             expect(publisher).to.equal(ethers.ZeroAddress);
-        });
-
-        it("Siapa saja (termasuk non-admin) bisa memverifikasi hash", async function () {
-            const testHash = ethers.keccak256(ethers.toUtf8Bytes("Public Verify Test"));
-
-            await certichain.storeHash(testHash);
-
-            // Verifikasi menggunakan koneksi otherUser (non-admin)
-            const [isValid] = await certichain.connect(otherUser).verifyHash(testHash);
-            expect(isValid).to.equal(true);
         });
     });
 });

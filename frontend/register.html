@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<section>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pendaftaran Institusi | CertiChain</title>
+        <!-- Tailwind CSS (CDN) -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
+                            accent: { 500: '#3b82f6', 600: '#2563eb' }
+                        },
+                        fontFamily: {
+                            sans: ['Inter', 'system-ui', 'sans-serif'],
+                        }
+                    }
+                }
+            }
+        </script>
+        <!-- Inter Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f8fafc;
+            }
+        </style>
+    </head>
+
+    <body class="antialiased min-h-screen flex flex-col">
+
+        <!-- Navbar -->
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        C
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Certi<span
+                            class="text-primary-600">Chain</span></span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="index.html"
+                        class="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Portal Admin</a>
+                    <a href="verify.html"
+                        class="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Verifikasi
+                        Publik</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex items-center justify-center p-6 py-12">
+            <div class="w-full max-w-xl">
+
+                <!-- Header Text -->
+                <div class="text-center mb-10">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-3 tracking-tight">Kemitraan Perguruan Tinggi</h1>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-md mx-auto">
+                        Daftarkan wallet institusi Anda untuk mendapatkan hak akses penerbitan ijazah digital di
+                        jaringan blockchain CertiChain.
+                    </p>
+                </div>
+
+                <!-- Registration Card -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+                    <!-- Step 1: Connect Wallet -->
+                    <div id="step1-connect" class="p-8 text-center flex flex-col items-center">
+                        <div
+                            class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-5 border border-blue-100">
+                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-2">Hubungkan Wallet Institusi</h2>
+                        <p class="text-sm text-gray-500 mb-8 max-w-xs leading-relaxed">Pastikan Anda menggunakan akun
+                            MetaMask resmi milik kampus yang akan didaftarkan.</p>
+
+                        <button id="btnConnect"
+                            class="w-full sm:w-auto px-8 py-3.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+                                alt="MetaMask" class="w-5 h-5">
+                            Connect MetaMask
+                        </button>
+
+                        <div class="mt-4 flex items-center gap-2 text-xs text-gray-400">
+                            <div class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
+                            Menunggu koneksi wallet...
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Registration Form (Hidden by default) -->
+                    <div id="step2-form" class="hidden">
+                        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900">Form Pengajuan Institusi</h2>
+                                <p class="text-xs text-gray-500 mt-1">Lengkapi data legalitas kampus Anda.</p>
+                            </div>
+                            <div
+                                class="bg-primary-50 text-primary-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-primary-100 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span> Wallet Terhubung
+                            </div>
+                        </div>
+
+                        <form id="registerForm" class="p-8 space-y-5">
+                            <!-- Input Nama Kampus -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Resmi Institusi
+                                    (Sesuai SK) <span class="text-red-500">*</span></label>
+                                <input type="text" id="regName" required placeholder="Contoh: Universitas Brawijaya"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400">
+                            </div>
+
+                            <!-- Input Short Name -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Singkatan / Akronim
+                                    Kampus <span class="text-red-500">*</span></label>
+                                <input type="text" id="regShort" required placeholder="Contoh: UB"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400">
+                            </div>
+
+                            <!-- Grid 2 Columns -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nomor SK
+                                        Pendirian</label>
+                                    <input type="text" id="regSK" placeholder="Contoh: 010/O/1990"
+                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Status
+                                        Akreditasi</label>
+                                    <select id="regAkred"
+                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm">
+                                        <option value="Unggul">Unggul (A)</option>
+                                        <option value="Baik Sekali">Baik Sekali (B)</option>
+                                        <option value="Baik">Baik (C)</option>
+                                        <option value="Belum Terakreditasi">Belum Terakreditasi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Input Website & Email -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Website
+                                        Resmi</label>
+                                    <input type="url" id="regWeb" placeholder="https://..."
+                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email PIC</label>
+                                    <input type="email" id="regEmail" placeholder="admin@kampus.ac.id"
+                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400">
+                                </div>
+                            </div>
+
+                            <!-- Input Alamat -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Alamat Lengkap</label>
+                                <textarea id="regAddress" rows="2" placeholder="Jl. Raya Kampus No. 1..."
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors outline-none text-sm placeholder-gray-400 resize-none"></textarea>
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" id="btnSubmitForm"
+                                    class="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2">
+                                    <span>Ajukan Pendaftaran ke Kementerian</span>
+                                </button>
+                            </div>
+
+                            <p class="text-[11px] text-gray-400 text-center leading-relaxed mt-4">
+                                Dengan mengklik Ajukan, dompet Anda akan menandatangani transaksi blockchain pengajuan
+                                (Gas Fee diperlukan). Data legalitas akan direview oleh Kementerian Pendidikan.
+                            </p>
+                        </form>
+                    </div>
+
+                    <!-- Step 3: Pending/Success Status (Hidden by default) -->
+                    <div id="step3-status" class="hidden p-8 text-center flex flex-col items-center">
+                        <div
+                            class="w-16 h-16 bg-yellow-50 rounded-full flex items-center justify-center mb-5 border border-yellow-100">
+                            <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-2">Menunggu Persetujuan</h2>
+                        <p class="text-sm text-gray-500 mb-6 max-w-sm leading-relaxed">
+                            Aplikasi Anda telah dikirim dan terekam di Blockchain. Status akun saat ini <span
+                                class="font-semibold text-yellow-600">PENDING</span> menunggu approval dari Kementerian.
+                        </p>
+
+                        <a href="index.html"
+                            class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors text-sm">
+                            Kembali ke Beranda
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal Status / Toast -->
+        <div id="toastContainer"></div>
+
+        <!-- Ethers.js v6 via CDN -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+        <!-- Register Logic -->
+        <script src="js/register.js"></script>
+    </body>
+
+</html>

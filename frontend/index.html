@@ -363,319 +363,406 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- ============================================================ -->
-            <!-- FORM INPUT & BULK IMPORT (Kolom Kiri, 2/3 lebar) -->
+            <!-- DASHBOARD KEMENTERIAN (SUPER ADMIN) -->
             <!-- ============================================================ -->
-            <div class="lg:col-span-2 space-y-8">
-
-                <!-- PANEL: BULK IMPORT CSV -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50"></div>
-
-                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="font-semibold text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            Bulk Import (Upload CSV)
-                        </h3>
-                        <span class="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-1 rounded">HEMAT
-                            GAS</span>
+            <div id="dashboardKementerian" class="hidden lg:col-span-3 space-y-8">
+                <!-- Panel Statistik Kementerian -->
+                <div
+                    class="bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-indigo-900">Portal Kementerian Pendidikan</h3>
+                        <p class="text-indigo-700 text-sm mt-1">Kelola permohonan pembukaan akses jaringan blockchain
+                            untuk institusi perguruan tinggi baru.</p>
                     </div>
+                    <div class="flex gap-4">
+                        <div
+                            class="bg-white rounded-lg shadow-sm border border-indigo-50 p-4 text-center min-w-[120px]">
+                            <p class="text-xs text-gray-500 font-medium mb-1">Menunggu Review</p>
+                            <p id="statPending" class="text-2xl font-bold text-yellow-600">0</p>
+                        </div>
+                        <div
+                            class="bg-white rounded-lg shadow-sm border border-indigo-50 p-4 text-center min-w-[120px]">
+                            <p class="text-xs text-gray-500 font-medium mb-1">Kampus Terhubung</p>
+                            <p id="statApproved" class="text-2xl font-bold text-green-600">0</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="px-6 py-5">
-                        <p class="text-sm text-gray-500 mb-4">Upload file CSV berisi data banyak mahasiswa untuk di-hash
-                            dan disimpan sekaligus dalam 1 transaksi.</p>
+                <!-- Tabel Approval -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Daftar Pengajuan Perguruan Tinggi
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left align-middle border-collapse">
+                            <thead class="text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold w-1/3">Detail Kampus</th>
+                                    <th class="px-6 py-4 font-semibold">Wallet Pengaju</th>
+                                    <th class="px-6 py-4 font-semibold text-center">Status On-Chain</th>
+                                    <th class="px-6 py-4 font-semibold text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvalTableBody" class="divide-y divide-gray-100">
+                                <!-- Diisi javascript -->
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                                        <div class="flex justify-center mb-3">
+                                            <div
+                                                class="w-6 h-6 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin">
+                                            </div>
+                                        </div>
+                                        Memuat data pendaftar...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-                        <form id="csvForm" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-center w-full">
-                                <label for="csvFile"
-                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <svg class="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor"
+            <!-- ============================================================ -->
+            <!-- DASHBOARD INSTITUSI (NORMAL ADMIN - KOLOM 2/3 KIRI, 1/3 KANAN) -->
+            <!-- ============================================================ -->
+            <div id="dashboardInstitusi" class="contents hidden">
+
+                <!-- FORM INPUT & BULK IMPORT (Kolom Kiri, 2/3 lebar) -->
+                <div class="lg:col-span-2 space-y-8">
+
+                    <!-- PANEL: BULK IMPORT CSV -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50">
+                        </div>
+
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                Bulk Import (Upload CSV)
+                            </h3>
+                            <span class="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-1 rounded">HEMAT
+                                GAS</span>
+                        </div>
+
+                        <div class="px-6 py-5">
+                            <p class="text-sm text-gray-500 mb-4">Upload file CSV berisi data banyak mahasiswa untuk
+                                di-hash
+                                dan disimpan sekaligus dalam 1 transaksi.</p>
+
+                            <form id="csvForm" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-center w-full">
+                                    <label for="csvFile"
+                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg class="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            <p class="mb-1 text-sm text-gray-500"><span class="font-semibold">Klik untuk
+                                                    upload</span> atau drag and drop</p>
+                                            <p class="text-xs text-gray-400">Format: Nama,NIM,Jurusan,IPK,TanggalLahir
+                                                (.csv)</p>
+                                        </div>
+                                        <input id="csvFile" type="file" accept=".csv" class="hidden" required />
+                                    </label>
+                                </div>
+
+                                <div id="csvFileInfo"
+                                    class="hidden flex items-center justify-between bg-primary-50 border border-primary-100 rounded-lg px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        <p class="mb-1 text-sm text-gray-500"><span class="font-semibold">Klik untuk
-                                                upload</span> atau drag and drop</p>
-                                        <p class="text-xs text-gray-400">Format: Nama,NIM,Jurusan,IPK,TanggalLahir
-                                            (.csv)</p>
+                                        <div>
+                                            <p id="csvFileName" class="text-xs font-semibold text-gray-700">
+                                                data_mahasiswa.csv</p>
+                                            <p id="csvRowCount" class="text-xs text-gray-500">Menemukan 0 baris data</p>
+                                        </div>
                                     </div>
-                                    <input id="csvFile" type="file" accept=".csv" class="hidden" required />
-                                </label>
+                                    <button type="button" id="btnProcessCsv"
+                                        class="px-4 py-2 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700 transition-colors">
+                                        Proses & Simpan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- PANEL: FORM INPUT MANUAL -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <!-- Form Header -->
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Data Ijazah Mahasiswa
+                            </h3>
+                        </div>
+
+                        <!-- Form Body -->
+                        <form id="hashForm" class="px-6 py-5 space-y-5">
+                            <!-- Nama Lengkap -->
+                            <div>
+                                <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">Nama
+                                    Lengkap</label>
+                                <input type="text" id="nama" placeholder="Contoh: Ahmad Fauzan Hakim"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                    required>
                             </div>
 
-                            <div id="csvFileInfo"
-                                class="hidden flex items-center justify-between bg-primary-50 border border-primary-100 rounded-lg px-4 py-3">
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <div>
-                                        <p id="csvFileName" class="text-xs font-semibold text-gray-700">
-                                            data_mahasiswa.csv</p>
-                                        <p id="csvRowCount" class="text-xs text-gray-500">Menemukan 0 baris data</p>
-                                    </div>
+                            <!-- NIM & Jurusan (2 kolom) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="nim" class="block text-sm font-medium text-gray-700 mb-1.5">NIM (Nomor
+                                        Induk
+                                        Mahasiswa)</label>
+                                    <input type="text" id="nim" placeholder="Contoh: 2024110001"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                        required>
                                 </div>
-                                <button type="button" id="btnProcessCsv"
-                                    class="px-4 py-2 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700 transition-colors">
-                                    Proses & Simpan
+                                <div>
+                                    <label for="jurusan" class="block text-sm font-medium text-gray-700 mb-1.5">Program
+                                        Studi</label>
+                                    <input type="text" id="jurusan" placeholder="Contoh: Sistem Informasi"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                        required>
+                                </div>
+                            </div>
+
+                            <!-- IPK & Tanggal Lahir (2 kolom) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1.5">IPK</label>
+                                    <input type="text" id="ipk" placeholder="Contoh: 3.85"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                        required>
+                                </div>
+                                <div>
+                                    <label for="tanggalLahir"
+                                        class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal
+                                        Lahir</label>
+                                    <input type="date" id="tanggalLahir"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                                        required>
+                                </div>
+                            </div>
+
+                            <!-- Preview Hash -->
+                            <div id="hashPreview" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Preview Hash
+                                    SHA-256</label>
+                                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+                                    <code id="hashValue" class="text-xs text-gray-600 break-all font-mono"></code>
+                                </div>
+                            </div>
+
+                            <!-- Tombol Aksi -->
+                            <div class="flex gap-3 pt-2">
+                                <button type="button" id="btnPreview" onclick="previewHash()"
+                                    class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                                    Preview Hash
+                                </button>
+                                <button type="submit" id="btnSubmit"
+                                    class="px-5 py-2.5 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                    Simpan ke Blockchain
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- PANEL: FORM INPUT MANUAL -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                    <!-- Form Header -->
-                    <div class="px-6 py-4 border-b border-gray-100">
-                        <h3 class="font-semibold text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Data Ijazah Mahasiswa
-                        </h3>
-                    </div>
+                <!-- ============================================================ -->
+                <!-- PANEL INFO (Kolom Kanan, 1/3 lebar) -->
+                <!-- ============================================================ -->
+                <div class="space-y-6">
 
-                    <!-- Form Body -->
-                    <form id="hashForm" class="px-6 py-5 space-y-5">
-                        <!-- Nama Lengkap -->
-                        <div>
-                            <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">Nama
-                                Lengkap</label>
-                            <input type="text" id="nama" placeholder="Contoh: Ahmad Fauzan Hakim"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                required>
-                        </div>
-
-                        <!-- NIM & Jurusan (2 kolom) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label for="nim" class="block text-sm font-medium text-gray-700 mb-1.5">NIM (Nomor Induk
-                                    Mahasiswa)</label>
-                                <input type="text" id="nim" placeholder="Contoh: 2024110001"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                    required>
-                            </div>
-                            <div>
-                                <label for="jurusan" class="block text-sm font-medium text-gray-700 mb-1.5">Program
-                                    Studi</label>
-                                <input type="text" id="jurusan" placeholder="Contoh: Sistem Informasi"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                    required>
+                    <!-- KARTU PROFIL INSTITUSI (dari JSON off-chain, diisi via JS) -->
+                    <div id="institutionProfileCard"
+                        class="hidden bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="bg-gradient-to-r from-primary-800 to-primary-600 px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/30">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white leading-tight">Profil Institusi</h3>
+                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                                        <span class="text-[10px] text-primary-100 font-medium">Terverifikasi
+                                            On-Chain</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- IPK & Tanggal Lahir (2 kolom) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="px-6 py-5 space-y-3">
                             <div>
-                                <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1.5">IPK</label>
-                                <input type="text" id="ipk" placeholder="Contoh: 3.85"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                    required>
+                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Nama
+                                    Kampus</p>
+                                <p id="profileCampusName" class="text-sm font-bold text-gray-900">-</p>
                             </div>
                             <div>
-                                <label for="tanggalLahir" class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal
-                                    Lahir</label>
-                                <input type="date" id="tanggalLahir"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                    required>
+                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                                    Alamat
+                                </p>
+                                <p id="profileCampusAddr" class="text-xs text-gray-600 leading-relaxed">-</p>
                             </div>
-                        </div>
-
-                        <!-- Preview Hash -->
-                        <div id="hashPreview" class="hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Preview Hash SHA-256</label>
-                            <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-                                <code id="hashValue" class="text-xs text-gray-600 break-all font-mono"></code>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                                        Akreditasi</p>
+                                    <span id="profileCampusAccred"
+                                        class="inline-block text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">-</span>
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Tombol Aksi -->
-                        <div class="flex gap-3 pt-2">
-                            <button type="button" id="btnPreview" onclick="previewHash()"
-                                class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                                Preview Hash
-                            </button>
-                            <button type="submit" id="btnSubmit"
-                                class="px-5 py-2.5 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                                Simpan ke Blockchain
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- ============================================================ -->
-            <!-- PANEL INFO (Kolom Kanan, 1/3 lebar) -->
-            <!-- ============================================================ -->
-            <div class="space-y-6">
-
-                <!-- KARTU PROFIL INSTITUSI (dari JSON off-chain, diisi via JS) -->
-                <div id="institutionProfileCard"
-                    class="hidden bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="bg-gradient-to-r from-primary-800 to-primary-600 px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/30">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-white leading-tight">Profil Institusi</h3>
-                                <div class="flex items-center gap-1.5 mt-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                                    <span class="text-[10px] text-primary-100 font-medium">Terverifikasi On-Chain</span>
+                            <div class="pt-2 border-t border-gray-100 space-y-2">
+                                <div class="flex items-center gap-2 text-xs">
+                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                    </svg>
+                                    <a id="profileCampusWeb" href="#" target="_blank"
+                                        class="text-primary-500 hover:underline truncate">-</a>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs">
+                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span id="profileCampusEmail" class="text-gray-600 truncate">-</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="px-6 py-5 space-y-3">
-                        <div>
-                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Nama
-                                Kampus</p>
-                            <p id="profileCampusName" class="text-sm font-bold text-gray-900">-</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Alamat
-                            </p>
-                            <p id="profileCampusAddr" class="text-xs text-gray-600 leading-relaxed">-</p>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="flex-1">
-                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
-                                    Akreditasi</p>
-                                <span id="profileCampusAccred"
-                                    class="inline-block text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">-</span>
-                            </div>
-                        </div>
-                        <div class="pt-2 border-t border-gray-100 space-y-2">
-                            <div class="flex items-center gap-2 text-xs">
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
+
+                    <!-- Recent Uploads / Log Aktivitas -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[500px]">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-900 text-sm flex items-center gap-2">
+                                <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <a id="profileCampusWeb" href="#" target="_blank"
-                                    class="text-primary-500 hover:underline truncate">-</a>
+                                Riwayat Hash Terakhir
+                            </h3>
+                            <button id="btnClearHistory"
+                                class="text-[10px] text-gray-400 hover:text-red-500 transition-colors cursor-pointer focus:outline-none">Hapus</button>
+                        </div>
+
+                        <!-- Container List History yang bisa di-scroll -->
+                        <div id="historyListContainer" class="flex-1 overflow-y-auto p-2 space-y-1">
+                            <!-- State Kosong -->
+                            <div id="emptyHistoryState"
+                                class="h-full flex flex-col items-center justify-center p-6 text-center">
+                                <div
+                                    class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-900 mb-1">Daftar Kosong</p>
+                                <p class="text-xs text-gray-500">Hash ijazah yang Anda simpan di sesi ini akan muncul di
+                                    sini.</p>
                             </div>
-                            <div class="flex items-center gap-2 text-xs">
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                <span id="profileCampusEmail" class="text-gray-600 truncate">-</span>
+
+                            <!-- Item List akan di-inject via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Cara Kerja -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <h3 class="font-semibold text-gray-900 text-sm">Cara Kerja</h3>
+                        </div>
+                        <div class="px-6 py-5 space-y-4">
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                    1</div>
+                                <p class="text-xs text-gray-600 leading-relaxed">Admin mengisi data mahasiswa (Nama,
+                                    NIM,
+                                    Jurusan, IPK, Tanggal Lahir).</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                    2</div>
+                                <p class="text-xs text-gray-600 leading-relaxed">Sistem menghasilkan <strong>hash
+                                        SHA-256</strong> dari data tersebut.</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
+                                    3</div>
+                                <p class="text-xs text-gray-600 leading-relaxed">Hanya <strong>hash</strong> yang
+                                    disimpan
+                                    di blockchain (hemat gas fee).</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-6 h-6 bg-accent-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                    ✓</div>
+                                <p class="text-xs text-gray-600 leading-relaxed">HRD dapat memverifikasi keaslian
+                                    melalui <a href="verify.html" class="text-primary-500 underline">Portal
+                                        Verifikasi</a>.</p>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Recent Uploads / Log Aktivitas -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[500px]">
-                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="font-semibold text-gray-900 text-sm flex items-center gap-2">
-                            <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Riwayat Hash Terakhir
-                        </h3>
-                        <button id="btnClearHistory"
-                            class="text-[10px] text-gray-400 hover:text-red-500 transition-colors cursor-pointer focus:outline-none">Hapus</button>
-                    </div>
-
-                    <!-- Container List History yang bisa di-scroll -->
-                    <div id="historyListContainer" class="flex-1 overflow-y-auto p-2 space-y-1">
-                        <!-- State Kosong -->
-                        <div id="emptyHistoryState"
-                            class="h-full flex flex-col items-center justify-center p-6 text-center">
-                            <div
-                                class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 text-gray-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
+                    <!-- Info Jaringan -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <h3 class="font-semibold text-gray-900 text-sm">Info Jaringan</h3>
+                        </div>
+                        <div class="px-6 py-5 space-y-3">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Network</span>
+                                <span id="networkName" class="font-medium text-gray-700">-</span>
                             </div>
-                            <p class="text-sm font-medium text-gray-900 mb-1">Daftar Kosong</p>
-                            <p class="text-xs text-gray-500">Hash ijazah yang Anda simpan di sesi ini akan muncul di
-                                sini.</p>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Contract</span>
+                                <span id="contractAddr"
+                                    class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Admin</span>
+                                <span id="adminAddr"
+                                    class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
+                            </div>
                         </div>
+                    </div>
+                </div> <!-- Akhir sidebar kolom Kanan -->
 
-                        <!-- Item List akan di-inject via JS -->
-                    </div>
-                </div>
+            </div> <!-- Akhiran <div id="dashboardInstitusi" class="contents"> -->
 
-                <!-- Cara Kerja -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-100">
-                        <h3 class="font-semibold text-gray-900 text-sm">Cara Kerja</h3>
-                    </div>
-                    <div class="px-6 py-5 space-y-4">
-                        <div class="flex gap-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                1</div>
-                            <p class="text-xs text-gray-600 leading-relaxed">Admin mengisi data mahasiswa (Nama, NIM,
-                                Jurusan, IPK, Tanggal Lahir).</p>
-                        </div>
-                        <div class="flex gap-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                2</div>
-                            <p class="text-xs text-gray-600 leading-relaxed">Sistem menghasilkan <strong>hash
-                                    SHA-256</strong> dari data tersebut.</p>
-                        </div>
-                        <div class="flex gap-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                3</div>
-                            <p class="text-xs text-gray-600 leading-relaxed">Hanya <strong>hash</strong> yang disimpan
-                                di blockchain (hemat gas fee).</p>
-                        </div>
-                        <div class="flex gap-3">
-                            <div
-                                class="flex-shrink-0 w-6 h-6 bg-accent-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                ✓</div>
-                            <p class="text-xs text-gray-600 leading-relaxed">HRD dapat memverifikasi keaslian melalui <a
-                                    href="verify.html" class="text-primary-500 underline">Portal Verifikasi</a>.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Info Jaringan -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-100">
-                        <h3 class="font-semibold text-gray-900 text-sm">Info Jaringan</h3>
-                    </div>
-                    <div class="px-6 py-5 space-y-3">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-500">Network</span>
-                            <span id="networkName" class="font-medium text-gray-700">-</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-500">Contract</span>
-                            <span id="contractAddr" class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-500">Admin</span>
-                            <span id="adminAddr" class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div> <!-- Akhiran w-full Grid -->
     </main>
 
     <!-- ============================================================ -->
