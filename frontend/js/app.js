@@ -92,13 +92,28 @@ async function connectBlockchain(method = 'auto') {
                 alert("Web3 Wallet tidak terdeteksi! Pastikan ekstensi dompet kripto (seperti MetaMask) sudah terinstall dan aktif di browser Anda.\n\nJika sudah install, coba refresh halaman.");
                 updateTxStatus("error", "Wallet tidak terdeteksi di browser ini.");
             }
+            // Tampilkan overlay login karena tidak ada wallet
+            document.getElementById("loginOverlay").classList.remove("hidden");
             return;
         }
 
         try {
             updateTxStatus("pending", "Menghubungkan ke jaringan MetaMask...");
-            // Minta akses wallet (akan memunculkan popup MetaMask)
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+            // Timeout wrapper: jika MetaMask tidak merespons dalam 15 detik, batalkan
+            const requestWithTimeout = (ms) => {
+                return new Promise((resolve, reject) => {
+                    const timer = setTimeout(() => {
+                        reject(new Error("MetaMask tidak merespons. Pastikan ekstensi MetaMask sudah unlock (masukkan password)."));
+                    }, ms);
+                    window.ethereum.request({ method: 'eth_requestAccounts' })
+                        .then(result => { clearTimeout(timer); resolve(result); })
+                        .catch(err => { clearTimeout(timer); reject(err); });
+                });
+            };
+
+            // Minta akses wallet (dengan timeout 15 detik)
+            const accounts = await requestWithTimeout(15000);
             if (!accounts || accounts.length === 0) {
                 throw new Error("Tidak ada akun MetaMask yang dipilih.");
             }
@@ -172,6 +187,8 @@ async function connectBlockchain(method = 'auto') {
             if (method === 'metamask') {
                 updateTxStatus("error", "Koneksi MetaMask dibatalkan atau gagal. Pastikan MetaMask sudah unlock dan coba lagi.");
             }
+            // Tampilkan overlay login
+            document.getElementById("loginOverlay").classList.remove("hidden");
             return;
         }
 
@@ -191,6 +208,7 @@ async function connectBlockchain(method = 'auto') {
             }
         }
 
+
         try {
             updateTxStatus("pending", "Menghubungkan ke jaringan Polygon Amoy...");
             provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
@@ -206,7 +224,7 @@ async function connectBlockchain(method = 'auto') {
             return;
         }
     } else {
-        // Belum login apapun
+        // Belum login apapun → tampilkan overlay login
         document.getElementById("loginOverlay").classList.remove("hidden");
         return;
     }
