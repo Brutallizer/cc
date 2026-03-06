@@ -107,7 +107,7 @@
                     </div>
                     <!-- Logout Button -->
                     <button id="btnLogout"
-                        onclick="localStorage.removeItem('credblock_admin_wallet'); window.location.reload();"
+                        onclick="localStorage.removeItem('credblock_admin_wallet'); localStorage.removeItem('credblock_login_method'); window.location.reload();"
                         class="ml-2 p-2 relative z-50 pointer-events-auto text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                         title="Keluar / Ganti Akun">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

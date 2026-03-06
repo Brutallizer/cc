@@ -87,10 +87,10 @@ async function connectBlockchain(method = 'auto') {
 
     if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('credblock_login_method') === 'metamask')) {
         // --- JALUR METAMASK ---
-        if (typeof window.ethereum === "undefined" || !window.ethereum.isMetaMask) {
+        if (typeof window.ethereum === "undefined") {
             if (method === 'metamask') {
-                alert("MetaMask tidak terdeteksi! Pastikan ekstensi MetaMask sudah terinstall dan aktif di browser Anda.\n\nJika sudah install, coba refresh halaman.");
-                updateTxStatus("error", "MetaMask tidak terdeteksi di browser ini.");
+                alert("Web3 Wallet tidak terdeteksi! Pastikan ekstensi dompet kripto (seperti MetaMask) sudah terinstall dan aktif di browser Anda.\n\nJika sudah install, coba refresh halaman.");
+                updateTxStatus("error", "Wallet tidak terdeteksi di browser ini.");
             }
             return;
         }
