@@ -116,8 +116,6 @@ async function connectBlockchain(method = 'auto') {
 
     let userAddress;
 
-    try { // <-- wrap SEMUA dalam satu try-finally agar isConnecting selalu di-reset
-
     if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('credblock_login_method') === 'metamask')) {
         // --- JALUR METAMASK ---
         if (typeof window.ethereum === "undefined") {
@@ -222,6 +220,7 @@ async function connectBlockchain(method = 'auto') {
             }
             // Tampilkan overlay login
             document.getElementById("loginOverlay").classList.remove("hidden");
+            // Harus melempar throw / mengembalikan Promise reject agar akhirnya lompat ke finally, kita gunakan isConnecting reset langsung di try
             return;
         }
 
@@ -253,12 +252,13 @@ async function connectBlockchain(method = 'auto') {
             localStorage.setItem('credblock_login_method', 'google');
         } catch (error) {
             console.error("❌ Gagal load Smart Wallet:", error);
-            updateTxStatus("error", "Gagal load sesi login.");
-            return;
+            document.getElementById("loginOverlay").classList.remove("hidden");
+            throw new Error("Gagal load sesi login Google DApp.");
         }
     } else {
         // Belum login apapun → tampilkan overlay login
         document.getElementById("loginOverlay").classList.remove("hidden");
+        isConnecting = false;
         return;
     }
 
@@ -271,91 +271,98 @@ async function connectBlockchain(method = 'auto') {
         updateNetworkInfo();
         await loadInstitutionsDB();
 
-        const superAdminAddress = await contract.admin();
-        const isSuperAdmin = (userAddress.toLowerCase() === superAdminAddress.toLowerCase());
+        try {
+            const superAdminAddress = await contract.admin();
+            const isSuperAdmin = (userAddress.toLowerCase() === superAdminAddress.toLowerCase());
 
-        const navInstEl = document.getElementById("navInstitutionName");
-        const bannerEl = document.getElementById("bannerNotRegistered");
-        const profileCardEl = document.getElementById("institutionProfileCard");
-        const dashInstitusi = document.getElementById("dashboardInstitusi");
-        const dashKementerian = document.getElementById("dashboardKementerian");
+            const navInstEl = document.getElementById("navInstitutionName");
+            const bannerEl = document.getElementById("bannerNotRegistered");
+            const profileCardEl = document.getElementById("institutionProfileCard");
+            const dashInstitusi = document.getElementById("dashboardInstitusi");
+            const dashKementerian = document.getElementById("dashboardKementerian");
 
-        if (isSuperAdmin) {
-            // ROLE 1: KEMENTERIAN PENDIDIKAN
-            if (navInstEl) navInstEl.textContent = "Super Admin (Kementerian)";
-            if (bannerEl) bannerEl.classList.add("hidden");
-            if (profileCardEl) profileCardEl.classList.add("hidden");
-
-            // Tampilkan Dashboard Super Admin, sembunyikan Dashboard Normal
-            if (dashInstitusi) dashInstitusi.classList.add("hidden");
-            if (dashKementerian) dashKementerian.classList.remove("hidden");
-
-            updateTxStatus("success", `Login berhasil sebagai Kementerian Pusat.`);
-
-            // Load antrian kampus
-            loadKementerianDashboard();
-
-        } else {
-            // ROLE 2: KAMPUS NORMAL
-            if (dashKementerian) dashKementerian.classList.add("hidden");
-
-            const instData = await contract.institutions(userAddress);
-            const instName = instData[0];
-            const instStatus = Number(instData[1]); // Enum (0=NotReg, 1=Pending, 2=Approved, 3=Rejected)
-
-            if (instStatus === 2) { // Approved
-                const profile = institutionsDB[userAddress] || null;
-                if (navInstEl) navInstEl.textContent = profile ? profile.shortName : instName;
+            if (isSuperAdmin) {
+                // ROLE 1: KEMENTERIAN PENDIDIKAN
+                if (navInstEl) navInstEl.textContent = "Super Admin (Kementerian)";
                 if (bannerEl) bannerEl.classList.add("hidden");
-                if (dashInstitusi) dashInstitusi.classList.remove("hidden");
-
-                if (profileCardEl && profile) {
-                    profileCardEl.classList.remove("hidden");
-                    document.getElementById("profileCampusName").textContent = profile.name;
-                    document.getElementById("profileCampusAddr").textContent = profile.address;
-                    document.getElementById("profileCampusAccred").textContent = profile.accreditation;
-                    document.getElementById("profileCampusWeb").textContent = profile.website;
-                    document.getElementById("profileCampusWeb").href = profile.website;
-                    document.getElementById("profileCampusEmail").textContent = profile.email;
-                }
-                updateTxStatus("success", `Login berhasil. Identitas: ${instName}`);
-            } else {
-                // Pending, Rejected, NotReg
-                if (navInstEl) navInstEl.textContent = "⚠️ Akses Dibatasi";
-                if (bannerEl) bannerEl.classList.remove("hidden");
                 if (profileCardEl) profileCardEl.classList.add("hidden");
+
+                // Tampilkan Dashboard Super Admin, sembunyikan Dashboard Normal
                 if (dashInstitusi) dashInstitusi.classList.add("hidden");
+                if (dashKementerian) dashKementerian.classList.remove("hidden");
 
-                let msg = "Wallet gagal memuat data.";
-                if (instStatus === 0) msg = "Wallet belum didaftarkan sebagai institusi.";
-                if (instStatus === 1) msg = "Pendaftaran Institusi Anda masih PENDING dan menunggu persetujuan Kementerian.";
-                if (instStatus === 3) msg = "Pendaftaran Institusi Anda telah ditolak Kementerian.";
+                updateTxStatus("success", `Login berhasil sebagai Kementerian Pusat.`);
 
-                updateTxStatus("error", msg);
+                // Load antrian kampus
+                loadKementerianDashboard();
 
-                if (instStatus === 0 || instStatus === 3) {
-                    // Beri tombol pendaftaran di banner
-                    if (bannerEl) {
-                        // [SECURITY FIX] Gunakan DOM API untuk menghindari innerHTML injection
-                        const linkDiv = document.createElement('div');
-                        linkDiv.className = 'ml-auto';
-                        const link = document.createElement('a');
-                        link.href = 'register.html';
-                        link.className = 'px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition';
-                        link.textContent = 'Daftar Sekarang';
-                        linkDiv.appendChild(link);
-                        bannerEl.appendChild(linkDiv);
+            } else {
+                // ROLE 2: KAMPUS NORMAL
+                if (dashKementerian) dashKementerian.classList.add("hidden");
+
+                const instData = await contract.institutions(userAddress);
+                const instName = instData[0];
+                const instStatus = Number(instData[1]); // Enum (0=NotReg, 1=Pending, 2=Approved, 3=Rejected)
+
+                if (instStatus === 2) { // Approved
+                    const profile = institutionsDB[userAddress] || null;
+                    if (navInstEl) navInstEl.textContent = profile ? profile.shortName : instName;
+                    if (bannerEl) bannerEl.classList.add("hidden");
+                    if (dashInstitusi) dashInstitusi.classList.remove("hidden");
+
+                    if (profileCardEl && profile) {
+                        profileCardEl.classList.remove("hidden");
+                        document.getElementById("profileCampusName").textContent = profile.name;
+                        document.getElementById("profileCampusAddr").textContent = profile.address;
+                        document.getElementById("profileCampusAccred").textContent = profile.accreditation;
+                        document.getElementById("profileCampusWeb").textContent = profile.website;
+                        document.getElementById("profileCampusWeb").href = profile.website;
+                        document.getElementById("profileCampusEmail").textContent = profile.email;
                     }
-                }
+                    updateTxStatus("success", `Login berhasil. Identitas: ${instName}`);
+                } else {
+                    // Pending, Rejected, NotReg
+                    if (navInstEl) navInstEl.textContent = "⚠️ Akses Dibatasi";
+                    if (bannerEl) bannerEl.classList.remove("hidden");
+                    if (profileCardEl) profileCardEl.classList.add("hidden");
+                    if (dashInstitusi) dashInstitusi.classList.add("hidden");
+
+                    let msg = "Wallet gagal memuat data.";
+                    if (instStatus === 0) msg = "Wallet belum didaftarkan sebagai institusi.";
+                    if (instStatus === 1) msg = "Pendaftaran Institusi Anda masih PENDING dan menunggu persetujuan Kementerian.";
+                    if (instStatus === 3) msg = "Pendaftaran Institusi Anda telah ditolak Kementerian.";
+
+                    updateTxStatus("error", msg);
+
+                    if (instStatus === 0 || instStatus === 3) {
+                        // Beri tombol pendaftaran di banner
+                        if (bannerEl) {
+                            // [SECURITY FIX] Gunakan DOM API untuk menghindari innerHTML injection
+                            const linkDiv = document.createElement('div');
+                            linkDiv.className = 'ml-auto';
+                            const link = document.createElement('a');
+                            link.href = 'register.html';
+                            link.className = 'px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition';
+                            link.textContent = 'Daftar Sekarang';
+                            linkDiv.appendChild(link);
+                            bannerEl.appendChild(linkDiv);
+                        }
+                    }
+                } // end else instStatus !== 2
+            } // end else isSuperAdmin
+        } catch (e) {
+            console.error("❌ Gagal memuat atau membaca profil kontrak onchain:", e);
+            if (typeof updateTxStatus === "function") {
+                updateTxStatus("error", "Gagal memverifikasi status kampus di blockchain.");
             }
         }
+    // Ini menutup try terluar (baris 119)
     } catch (e) {
-        console.error("❌ Gagal verifikasi contract:", e);
-        updateTxStatus("error", "Gagal memverifikasi status kampus di blockchain.");
-    }
-
+        console.error("❌ Gagal jalankan DApp:", e);
+        if (typeof updateTxStatus === "function") {
+            updateTxStatus("error", "Koneksi ke DApp gagal akibat masalah Wallet Provider atau RPC.");
+        }
     } finally {
-        // SELALU reset guard, apapun hasilnya
         isConnecting = false;
     }
 }
