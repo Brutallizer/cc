@@ -54,6 +54,39 @@ let contract;   // Instance smart contract yang bisa dipanggil dari JS
 let institutionsDB = {}; // Database profil kampus (dari JSON off-chain)
 let isConnecting = false; // Guard agar koneksi tidak dipanggil berulang kali
 
+// [SECURITY] RPC Failover URLs
+const RPC_URLS = [
+    "https://polygon-amoy-bor-rpc.publicnode.com",
+    "https://rpc-amoy.polygon.technology/",
+    "https://polygon-amoy.drpc.org"
+];
+
+/**
+ * [SECURITY] Sanitasi string sebelum inject ke innerHTML untuk mencegah XSS.
+ * Mengubah karakter berbahaya menjadi HTML entities.
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * [SECURITY] Mendapatkan provider RPC yang berfungsi dengan failover.
+ */
+async function getWorkingProvider() {
+    for (const url of RPC_URLS) {
+        try {
+            const p = new ethers.JsonRpcProvider(url);
+            await p.getBlockNumber();
+            return p;
+        } catch (e) {
+            console.warn("RPC gagal, mencoba berikutnya...");
+        }
+    }
+    throw new Error("Semua RPC endpoint gagal. Coba lagi nanti.");
+}
+
 // ============================================================
 // FUNGSI INISIALISASI & KONEKSI (ACCOUNT ABSTRACTION)
 // ============================================================
@@ -198,8 +231,11 @@ async function connectBlockchain(method = 'auto') {
 
         if (!savedPrivateKey) {
             if (method === 'google') {
-                // Di rilis publik ini, kita hardcode Private Key admin yang nantinya HARUS diisi saldo MATIC Testnet
-                savedPrivateKey = "0xc2701619eeb4142848d298211a7c88d26544dce27c1d1e4d211c717e8fc6375a";
+                // [SECURITY FIX] Setiap user Google mendapat wallet BARU yang UNIK
+                // Private key di-generate secara acak di browser (Principle of Least Privilege)
+                // Wallet baru ini default role = NotRegistered (bukan admin)
+                const randomWallet = ethers.Wallet.createRandom();
+                savedPrivateKey = randomWallet.privateKey;
                 localStorage.setItem("credblock_admin_wallet", savedPrivateKey);
                 localStorage.setItem('credblock_login_method', 'google');
             } else {
@@ -208,16 +244,13 @@ async function connectBlockchain(method = 'auto') {
             }
         }
 
-
         try {
             updateTxStatus("pending", "Menghubungkan ke jaringan Polygon Amoy...");
-            provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
+            // [SECURITY FIX] Gunakan RPC failover
+            provider = await getWorkingProvider();
             signer = new ethers.Wallet(savedPrivateKey, provider);
             userAddress = await signer.getAddress();
             localStorage.setItem('credblock_login_method', 'google');
-
-            console.log("✅ Terhubung via Smart Wallet (Google Auth)");
-            console.log("   Admin address:", userAddress);
         } catch (error) {
             console.error("❌ Gagal load Smart Wallet:", error);
             updateTxStatus("error", "Gagal load sesi login.");
@@ -303,7 +336,15 @@ async function connectBlockchain(method = 'auto') {
                 if (instStatus === 0 || instStatus === 3) {
                     // Beri tombol pendaftaran di banner
                     if (bannerEl) {
-                        bannerEl.innerHTML += `<div class="ml-auto"><a href="register.html" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition">Daftar Sekarang</a></div>`;
+                        // [SECURITY FIX] Gunakan DOM API untuk menghindari innerHTML injection
+                        const linkDiv = document.createElement('div');
+                        linkDiv.className = 'ml-auto';
+                        const link = document.createElement('a');
+                        link.href = 'register.html';
+                        link.className = 'px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition';
+                        link.textContent = 'Daftar Sekarang';
+                        linkDiv.appendChild(link);
+                        bannerEl.appendChild(linkDiv);
                     }
                 }
             }
@@ -362,13 +403,15 @@ async function loadKementerianDashboard() {
 
             // Gabungkan metadata detail dari JSON (institutionsDB) atau pending lokal (localDB)
             let detailData = localDB[wallet] || institutionsDB[wallet] || {};
-            let theName = detailData.name || onchainName || "Institusi Anonim";
+            // [SECURITY FIX] Escape semua data yang masuk ke innerHTML untuk mencegah XSS
+            let theName = escapeHtml(detailData.name || onchainName || "Institusi Anonim");
             let webEmail = '<span class="text-xs text-gray-400">Data legalitas offchain tidak ditemukan</span>';
 
             if (detailData.sk) {
-                webEmail = `<div class="text-[11px] text-gray-500 mt-1 flex gap-2"><span>SK: ${detailData.sk}</span> &bull; <span>${detailData.akreditasi || '-'}</span></div>`;
+                webEmail = `<div class="text-[11px] text-gray-500 mt-1 flex gap-2"><span>SK: ${escapeHtml(detailData.sk)}</span> &bull; <span>${escapeHtml(detailData.akreditasi || '-')}</span></div>`;
             }
 
+            // [SECURITY FIX] Ganti inline onclick dengan data-attributes (event delegation)
             html += `
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">
@@ -376,15 +419,15 @@ async function loadKementerianDashboard() {
                     ${webEmail}
                 </td>
                 <td class="px-6 py-4">
-                    <span class="font-mono text-[11px] text-gray-600 bg-gray-100 px-2 py-1 rounded truncate max-w-[120px] block" title="${wallet}">${wallet.slice(0, 8)}...${wallet.slice(-6)}</span>
+                    <span class="font-mono text-[11px] text-gray-600 bg-gray-100 px-2 py-1 rounded truncate max-w-[120px] block" title="${escapeHtml(wallet)}">${wallet.slice(0, 8)}...${wallet.slice(-6)}</span>
                 </td>
                 <td class="px-6 py-4 text-center">
                     ${badgeHtml}
                 </td>
                 <td class="px-6 py-4 text-right">
                     ${isActionable ? `
-                        <button onclick="actionApprove('${wallet}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Approve</button>
-                        <button onclick="actionReject('${wallet}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Tolak</button>
+                        <button data-action="approve" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Approve</button>
+                        <button data-action="reject" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Tolak</button>
                     ` : `
                         <span class="text-[11px] text-gray-400 font-medium">Selesai</span>
                     `}
@@ -393,6 +436,16 @@ async function loadKementerianDashboard() {
         }
 
         tableBody.innerHTML = html;
+
+        // [SECURITY FIX] Event delegation untuk tombol Approve/Reject
+        tableBody.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const wallet = btn.dataset.wallet;
+            if (btn.dataset.action === 'approve') actionApprove(wallet);
+            if (btn.dataset.action === 'reject') actionReject(wallet);
+        });
+
         if (document.getElementById("statPending")) document.getElementById("statPending").textContent = pendingCount;
         if (document.getElementById("statApproved")) document.getElementById("statApproved").textContent = approvedCount;
 
@@ -482,7 +535,7 @@ window.actionReject = async function (wallet) {
 async function generateHash(nama, nim, jurusan, ipk, tanggalLahir) {
     // Langkah 1: Gabungkan data dengan separator "|"
     const dataString = `${nama}|${nim}|${jurusan}|${ipk}|${tanggalLahir}`;
-    console.log("📝 Data string:", dataString);
+    // [SECURITY FIX] Hapus console.log data mahasiswa (PII protection)
 
     // Langkah 2: Encode string ke bytes (UTF-8)
     const encoder = new TextEncoder();
@@ -497,7 +550,7 @@ async function generateHash(nama, nim, jurusan, ipk, tanggalLahir) {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = "0x" + hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-    console.log("🔒 Hash SHA-256:", hashHex);
+    // [SECURITY FIX] Jangan log hash ke console di production
     return hashHex;
 }
 
@@ -559,6 +612,12 @@ document.getElementById("hashForm").addEventListener("submit", async function (e
     // Validasi
     if (!nama || !nim || !jurusan || !ipk || !tanggalLahir) {
         alert("Harap isi semua field!");
+        return;
+    }
+
+    // [SECURITY FIX] Validasi panjang input untuk mencegah DoS
+    if (nama.length > 200 || nim.length > 50 || jurusan.length > 200 || ipk.length > 10) {
+        alert("Input terlalu panjang! Periksa kembali data Anda.");
         return;
     }
 
@@ -640,6 +699,14 @@ document.getElementById("csvFile").addEventListener("change", function (e) {
         // Parsing CSV dasar (asumsi separator koma atau baris baru)
         const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
 
+        // [SECURITY FIX] Batas maksimum baris untuk mencegah DoS/crash browser
+        const MAX_CSV_ROWS = 500;
+        if (lines.length > MAX_CSV_ROWS + 1) {
+            alert(`File CSV terlalu besar. Maksimum ${MAX_CSV_ROWS} baris data.`);
+            document.getElementById("btnProcessCsv").disabled = true;
+            return;
+        }
+
         let validRows = 0;
         currentCsvHashes = []; // Reset array
         currentCsvNames = [];  // Reset array nama
@@ -651,8 +718,13 @@ document.getElementById("csvFile").addEventListener("change", function (e) {
         for (let i = startIndex; i < lines.length; i++) {
             const cols = lines[i].split(",");
             if (cols.length >= 5) {
-                // Bersihkan kutipan atau spasi ekstra
-                const p = cols.map(c => c.replace(/"/g, "").trim());
+                // [SECURITY FIX] Sanitasi: hapus formula injection + batasi panjang
+                const p = cols.map(c => {
+                    let clean = c.replace(/"/g, "").trim();
+                    if (/^[=+\-@]/.test(clean)) clean = "'" + clean;
+                    if (clean.length > 200) clean = clean.substring(0, 200);
+                    return clean;
+                });
 
                 // Urutan: nama, nim, jurusan, ipk, tanggalLahir
                 const hash = await generateHash(p[0], p[1], p[2], p[3], p[4]);
@@ -836,7 +908,7 @@ function showToast(type, message) {
 
     toast.innerHTML = `
         <div class="flex-shrink-0">${iconHtml}</div>
-        <p class="text-sm font-medium pr-2">${message}</p>
+        <p class="text-sm font-medium pr-2">${escapeHtml(message)}</p>
     `;
 
     container.appendChild(toast);

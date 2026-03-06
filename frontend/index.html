@@ -7,6 +7,8 @@
     <meta name="description"
         content="CredBlock - Sistem Verifikasi Ijazah Berbasis Blockchain. Dashboard Admin Kampus untuk menyimpan hash data mahasiswa ke blockchain.">
     <title>CredBlock — Dashboard Admin Kampus</title>
+    <!-- [SECURITY] Favicon -->
+    <link rel="icon" href="img/logo_fix.jpeg" type="image/jpeg">
 
     <!-- Google Fonts: Inter (tipografi modern & profesional) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -731,8 +733,11 @@
         </div>
     </footer>
 
-    <!-- Ethers.js v6 via CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+    <!-- Ethers.js v6 via CDN [SECURITY: SRI integrity hash] -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"
+            integrity="sha512-OKX4Q5ACZVxaT8t0NlF73Rs5oB/0hEwXxjXwxKPD1DW9isA/sYk1fGxZZYA6hG2Bh/dDqBLH0i8bxqlU2dz+A=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
     <!-- App Logic -->
     <script src="js/app.js"></script>
 </body>

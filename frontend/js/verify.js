@@ -39,6 +39,22 @@ let provider;   // Koneksi ke blockchain (read-only)
 let contract;   // Instance smart contract
 let institutionsDB = {}; // Database profil kampus (dari JSON off-chain)
 
+// [SECURITY] RPC Failover URLs
+const RPC_URLS = [
+    "https://polygon-amoy-bor-rpc.publicnode.com",
+    "https://rpc-amoy.polygon.technology/",
+    "https://polygon-amoy.drpc.org"
+];
+
+/**
+ * [SECURITY] Sanitasi string sebelum inject ke innerHTML untuk mencegah XSS.
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // ============================================================
 // FUNGSI INISIALISASI
 // ============================================================
@@ -67,26 +83,31 @@ async function loadInstitutionsDB() {
 
 async function connectBlockchain() {
     try {
-        // Karena ini akan ditaruh di Vercel (Produksi)
-        // Kita langsung konek ke Public RPC Polygon Amoy
-        provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
-        await provider.getBlockNumber(); // Test koneksi
-
-        console.log("\u2705 Terhubung ke Jaringan Polygon Amoy (read-only)");
-
-    } catch (localError) {
-        console.log("\u26a0\ufe0f RPC down, mencoba fallback ke MetaMask...");
-
-        if (typeof window.ethereum !== "undefined") {
-            provider = new ethers.BrowserProvider(window.ethereum);
-            console.log("\u2705 Terhubung via MetaMask (read-only fallbak)");
-        } else {
-            throw new Error("Tidak ada provider blockchain.");
+        // [SECURITY FIX] RPC failover — coba beberapa endpoint
+        for (const url of RPC_URLS) {
+            try {
+                provider = new ethers.JsonRpcProvider(url);
+                await provider.getBlockNumber(); // Test koneksi
+                break;
+            } catch (e) {
+                console.warn("RPC gagal, mencoba berikutnya...");
+                provider = null;
+            }
         }
+
+        if (!provider) {
+            // Fallback ke MetaMask jika semua RPC gagal
+            if (typeof window.ethereum !== "undefined") {
+                provider = new ethers.BrowserProvider(window.ethereum);
+            } else {
+                throw new Error("Tidak ada provider blockchain.");
+            }
+        }
+    } catch (err) {
+        throw err;
     }
 
     // Buat instance contract dengan PROVIDER (bukan signer)
-    // Provider = read-only, cukup untuk memanggil view functions
     contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
 
     // Load profil kampus dari JSON
@@ -120,7 +141,7 @@ async function connectBlockchain() {
 async function generateHash(nama, nim, jurusan, ipk, tanggalLahir) {
     // Format HARUS sama: "nama|nim|jurusan|ipk|tanggalLahir"
     const dataString = `${nama}|${nim}|${jurusan}|${ipk}|${tanggalLahir}`;
-    console.log("📝 Data string:", dataString);
+    // [SECURITY FIX] Hapus console.log data mahasiswa (PII protection)
 
     const encoder = new TextEncoder();
     const data = encoder.encode(dataString);
@@ -132,7 +153,7 @@ async function generateHash(nama, nim, jurusan, ipk, tanggalLahir) {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = "0x" + hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-    console.log("🔒 Hash SHA-256:", hashHex);
+    // [SECURITY FIX] Jangan log hash ke console di production
     return hashHex;
 }
 
@@ -203,14 +224,14 @@ document.getElementById("verifyForm").addEventListener("submit", async function 
                                 </svg>
                                 <span class="text-xs font-bold text-green-800">Profil Penerbit Terverifikasi</span>
                             </div>
-                            <p class="text-sm font-bold text-gray-900">${profile.name}</p>
-                            <p class="text-xs text-gray-600">${profile.address}</p>
+                            <p class="text-sm font-bold text-gray-900">${escapeHtml(profile.name)}</p>
+                            <p class="text-xs text-gray-600">${escapeHtml(profile.address)}</p>
                             <div class="flex flex-wrap gap-2 mt-1">
-                                <span class="text-[10px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">${profile.accreditation}</span>
+                                <span class="text-[10px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">${escapeHtml(profile.accreditation)}</span>
                             </div>
                             <div class="flex items-center gap-4 text-[11px] text-gray-500 mt-2">
-                                <a href="${profile.website}" target="_blank" class="text-primary-500 hover:underline">${profile.website}</a>
-                                <span>${profile.email}</span>
+                                <a href="${escapeHtml(profile.website)}" target="_blank" class="text-primary-500 hover:underline">${escapeHtml(profile.website)}</a>
+                                <span>${escapeHtml(profile.email)}</span>
                             </div>
                             <p class="text-[10px] text-gray-400 font-mono mt-1">Wallet: ${publisher}</p>
                         </div>
@@ -220,8 +241,8 @@ document.getElementById("verifyForm").addEventListener("submit", async function 
                 profileHtml = `
                     <div class="mt-3">
                         <span class="text-xs text-green-700 bg-green-100 px-2 py-1 rounded inline-block mb-1">Diterbitkan Oleh:</span><br>
-                        <strong>${campusName}</strong><br>
-                        <span class="text-[10px] text-gray-500 font-mono">${publisher}</span>
+                        <strong>${escapeHtml(campusName)}</strong><br>
+                        <span class="text-[10px] text-gray-500 font-mono">${escapeHtml(publisher)}</span>
                     </div>
                 `;
             }
