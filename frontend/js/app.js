@@ -52,6 +52,7 @@ let provider;   // Object untuk berkomunikasi dengan jaringan blockchain
 let signer;     // Object yang merepresentasikan akun pengguna (admin)
 let contract;   // Instance smart contract yang bisa dipanggil dari JS
 let institutionsDB = {}; // Database profil kampus (dari JSON off-chain)
+let isConnecting = false; // Guard agar koneksi tidak dipanggil berulang kali
 
 // ============================================================
 // FUNGSI INISIALISASI & KONEKSI (ACCOUNT ABSTRACTION)
@@ -73,13 +74,23 @@ async function loadInstitutionsDB() {
 }
 
 async function connectBlockchain(method = 'auto') {
+    // Guard: cegah double-click / race condition
+    if (isConnecting) {
+        console.warn("⏳ connectBlockchain sudah sedang berjalan, skip.");
+        return;
+    }
+    isConnecting = true;
+
     let userAddress;
+
+    try { // <-- wrap SEMUA dalam satu try-finally agar isConnecting selalu di-reset
 
     if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('credblock_login_method') === 'metamask')) {
         // --- JALUR METAMASK ---
-        if (typeof window.ethereum === "undefined") {
+        if (typeof window.ethereum === "undefined" || !window.ethereum.isMetaMask) {
             if (method === 'metamask') {
-                alert("MetaMask tidak terdeteksi! Silakan install ekstensi MetaMask di browser Anda.");
+                alert("MetaMask tidak terdeteksi! Pastikan ekstensi MetaMask sudah terinstall dan aktif di browser Anda.\n\nJika sudah install, coba refresh halaman.");
+                updateTxStatus("error", "MetaMask tidak terdeteksi di browser ini.");
             }
             return;
         }
@@ -87,7 +98,10 @@ async function connectBlockchain(method = 'auto') {
         try {
             updateTxStatus("pending", "Menghubungkan ke jaringan MetaMask...");
             // Minta akses wallet (akan memunculkan popup MetaMask)
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            if (!accounts || accounts.length === 0) {
+                throw new Error("Tidak ada akun MetaMask yang dipilih.");
+            }
 
             // --- AUTO SWITCH CHAIN KE POLYGON AMOY (Chain ID: 80002 / 0x13882) ---
             const targetChainId = '0x13882';
@@ -145,11 +159,18 @@ async function connectBlockchain(method = 'auto') {
                     window.location.reload();
                 }
             });
+            // Dengarkan perubahan chain
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log("Chain changed to:", chainId);
+                window.location.reload();
+            });
 
         } catch (error) {
             console.error("❌ Batal / Gagal terkoneksi MetaMask:", error);
+            // Hapus sesi lama agar tidak auto-reconnect loop
+            localStorage.removeItem('credblock_login_method');
             if (method === 'metamask') {
-                updateTxStatus("error", "Koneksi MetaMask dibatalkan atau gagal.");
+                updateTxStatus("error", "Koneksi MetaMask dibatalkan atau gagal. Pastikan MetaMask sudah unlock dan coba lagi.");
             }
             return;
         }
@@ -272,6 +293,11 @@ async function connectBlockchain(method = 'auto') {
     } catch (e) {
         console.error("❌ Gagal verifikasi contract:", e);
         updateTxStatus("error", "Gagal memverifikasi status kampus di blockchain.");
+    }
+
+    } finally {
+        // SELALU reset guard, apapun hasilnya
+        isConnecting = false;
     }
 }
 
@@ -400,19 +426,9 @@ window.actionReject = async function (wallet) {
 
 // ============================================================
 // EVENT LISTENER: GOOGLE LOGIN (SIMULASI)
+// NOTE: Event listener UTAMA untuk Google dan MetaMask ada di DOMContentLoaded di bawah.
+//       Blok ini DIHAPUS untuk menghindari duplikat listener.
 // ============================================================
-const btnGoogleLoginInit = document.getElementById("btnGoogleLogin");
-if (btnGoogleLoginInit) {
-    btnGoogleLoginInit.addEventListener("click", () => {
-        document.getElementById("loginText").textContent = "Authenticating...";
-        document.getElementById("loginSpinner").classList.remove("hidden");
-        btnGoogleLoginInit.disabled = true;
-
-        setTimeout(() => {
-            connectBlockchain('google');
-        }, 1500);
-    });
-}
 
 // ============================================================
 // FUNGSI HASHING
@@ -997,15 +1013,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnGoogleLogin) {
         btnGoogleLogin.addEventListener("click", () => {
-            // Hapus session lama jika user klik tombol secara manual (untuk force new wallet)
+            // Animasi loading
+            const loginText = document.getElementById("loginText");
+            const loginSpinner = document.getElementById("loginSpinner");
+            if (loginText) loginText.textContent = "Authenticating...";
+            if (loginSpinner) loginSpinner.classList.remove("hidden");
+            btnGoogleLogin.disabled = true;
+
+            // Hapus session lama jika user klik tombol secara manual
             localStorage.removeItem("credblock_admin_wallet");
-            connectBlockchain('google');
+            setTimeout(() => {
+                connectBlockchain('google');
+            }, 1200);
         });
     }
 
     if (btnMetaMaskLogin) {
         btnMetaMaskLogin.addEventListener("click", () => {
-            connectBlockchain('metamask');
+            // Disable tombol saat proses koneksi
+            btnMetaMaskLogin.disabled = true;
+            btnMetaMaskLogin.style.opacity = '0.6';
+            connectBlockchain('metamask').finally(() => {
+                btnMetaMaskLogin.disabled = false;
+                btnMetaMaskLogin.style.opacity = '1';
+            });
         });
     }
 });
