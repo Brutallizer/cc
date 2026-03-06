@@ -10,7 +10,7 @@
 
 ## ABSTRAK
 
-Proses verifikasi keaslian dokumen akademik di Indonesia masih menghadapi kendala berupa prosedur manual yang lambat, biaya legalisir yang tinggi, serta meningkatnya kasus pemalsuan ijazah yang merugikan dunia pendidikan dan industri. Penelitian ini bertujuan untuk merancang dan membangun sistem verifikasi keaslian dokumen ijazah bernama **CertiChain**, berbasis teknologi Blockchain dan Smart Contract. Sistem dikembangkan menggunakan Smart Contract berbahasa **Solidity v0.8.24** yang di-deploy pada jaringan **Ethereum Virtual Machine (EVM)**, dengan antarmuka web menggunakan **HTML5**, **Vanilla JavaScript**, **TailwindCSS**, dan pustaka **Ethers.js v6** sebagai jembatan komunikasi ke blockchain. Mekanisme keamanan bertumpu pada algoritma hashing **SHA-256** melalui Web Crypto API bawaan browser untuk mengonversi data mahasiswa menjadi sidik jari digital (*hash*) yang bersifat satu arah (*one-way function*). Metodologi pengembangan yang digunakan adalah **Iterative Incremental Development** dengan kerangka kerja **Hardhat** sebagai lingkungan pengujian lokal. Hasil pengujian menggunakan metode **Black Box Testing** terhadap 9 skenario uji menunjukkan seluruh fungsi sistem berjalan 100% sesuai kebutuhan fungsional, mencakup penyimpanan hash tunggal, penyimpanan hash massal (*bulk import*), verifikasi data valid, penolakan data palsu, serta kontrol akses admin. Sistem berhasil membuktikan bahwa perubahan sekecil satu karakter pada data input menghasilkan hash yang sepenuhnya berbeda, sehingga setiap upaya pemalsuan dapat terdeteksi secara otomatis dan permanen.
+Proses verifikasi keaslian dokumen akademik di Indonesia masih menghadapi kendala berupa prosedur manual yang lambat, biaya legalisir yang tinggi, serta meningkatnya kasus pemalsuan ijazah yang merugikan dunia pendidikan dan industri. Penelitian ini bertujuan untuk merancang dan membangun sistem verifikasi keaslian dokumen ijazah bernama **CredBlock**, berbasis teknologi Blockchain dan Smart Contract. Sistem dikembangkan menggunakan Smart Contract berbahasa **Solidity v0.8.24** yang di-deploy pada jaringan **Ethereum Virtual Machine (EVM)**, dengan antarmuka web menggunakan **HTML5**, **Vanilla JavaScript**, **TailwindCSS**, dan pustaka **Ethers.js v6** sebagai jembatan komunikasi ke blockchain. Mekanisme keamanan bertumpu pada algoritma hashing **SHA-256** melalui Web Crypto API bawaan browser untuk mengonversi data mahasiswa menjadi sidik jari digital (*hash*) yang bersifat satu arah (*one-way function*). Metodologi pengembangan yang digunakan adalah **Iterative Incremental Development** dengan kerangka kerja **Hardhat** sebagai lingkungan pengujian lokal. Hasil pengujian menggunakan metode **Black Box Testing** terhadap 9 skenario uji menunjukkan seluruh fungsi sistem berjalan 100% sesuai kebutuhan fungsional, mencakup penyimpanan hash tunggal, penyimpanan hash massal (*bulk import*), verifikasi data valid, penolakan data palsu, serta kontrol akses admin. Sistem berhasil membuktikan bahwa perubahan sekecil satu karakter pada data input menghasilkan hash yang sepenuhnya berbeda, sehingga setiap upaya pemalsuan dapat terdeteksi secara otomatis dan permanen.
 
 **Kata Kunci:** Blockchain, Smart Contract, Verifikasi Ijazah, SHA-256, Ethereum, Solidity, Immutability, Desentralisasi
 
@@ -20,7 +20,7 @@ Proses verifikasi keaslian dokumen akademik di Indonesia masih menghadapi kendal
 
 ### 1.1 Latar Belakang Umum (*General Background*)
 
-Verifikasi keaslian dokumen akademik merupakan proses krusial yang menghubungkan dunia pendidikan tinggi dengan dunia industri, khususnya dalam proses rekrutmen tenaga kerja profesional. Di Indonesia, proses ini masih sangat bergantung pada mekanisme konvensional seperti legalisir stempel basah, pengiriman surat verifikasi antar-universitas, hingga pengecekan manual melalui Pangkalan Data Pendidikan Tinggi (PDDIKTI) yang kerap mengalami keterlambatan respons atau *downtime* server. Perkembangan teknologi Blockchain menawarkan paradigma baru berupa penyimpanan data yang bersifat desentralisasi, transparan, dan tidak dapat diubah (*immutable*), menjadikannya kandidat solusi ideal untuk permasalahan integritas dokumen. Penelitian ini mengusulkan pembangunan sistem verifikasi keaslian ijazah bernama CertiChain yang memanfaatkan Smart Contract pada jaringan EVM untuk menyimpan sidik jari kriptografi dari data kelulusan mahasiswa. Tujuan utama penelitian ini adalah merancang dan mengimplementasikan arsitektur dApp (*Decentralized Application*) yang mampu memverifikasi keaslian ijazah secara instan, gratis bagi pihak pemverifikasi, dan kebal terhadap manipulasi data.
+Verifikasi keaslian dokumen akademik merupakan proses krusial yang menghubungkan dunia pendidikan tinggi dengan dunia industri, khususnya dalam proses rekrutmen tenaga kerja profesional. Di Indonesia, proses ini masih sangat bergantung pada mekanisme konvensional seperti legalisir stempel basah, pengiriman surat verifikasi antar-universitas, hingga pengecekan manual melalui Pangkalan Data Pendidikan Tinggi (PDDIKTI) yang kerap mengalami keterlambatan respons atau *downtime* server. Perkembangan teknologi Blockchain menawarkan paradigma baru berupa penyimpanan data yang bersifat desentralisasi, transparan, dan tidak dapat diubah (*immutable*), menjadikannya kandidat solusi ideal untuk permasalahan integritas dokumen. Penelitian ini mengusulkan pembangunan sistem verifikasi keaslian ijazah bernama CredBlock yang memanfaatkan Smart Contract pada jaringan EVM untuk menyimpan sidik jari kriptografi dari data kelulusan mahasiswa. Tujuan utama penelitian ini adalah merancang dan mengimplementasikan arsitektur dApp (*Decentralized Application*) yang mampu memverifikasi keaslian ijazah secara instan, gratis bagi pihak pemverifikasi, dan kebal terhadap manipulasi data.
 
 ### 1.2 Latar Belakang Spesifik (*Specific Background*)
 
@@ -32,7 +32,7 @@ Sebagian besar solusi yang dikembangkan dalam ranah administrasi akademik digita
 
 ### 1.4 Kontribusi Penelitian (*Here We Show*)
 
-Penelitian ini mengusulkan arsitektur dApp CertiChain yang mentransformasi mekanisme verifikasi dokumen dari paradigma tersentralisasi menjadi terdesentralisasi. Perancangan sistem bertumpu pada pemisahan tanggung jawab: proses hashing SHA-256 dilakukan di sisi klien menggunakan Web Crypto API, sementara penyematan jejak kriptografi ke blockchain dilakukan melalui Smart Contract Solidity via Ethers.js. Arsitektur ini mengeliminasi kebutuhan penyimpanan data pribadi di blockchain, dan menekan biaya transaksi melalui fitur *Bulk Import* yang memproses ratusan data dalam satu transaksi.
+Penelitian ini mengusulkan arsitektur dApp CredBlock yang mentransformasi mekanisme verifikasi dokumen dari paradigma tersentralisasi menjadi terdesentralisasi. Perancangan sistem bertumpu pada pemisahan tanggung jawab: proses hashing SHA-256 dilakukan di sisi klien menggunakan Web Crypto API, sementara penyematan jejak kriptografi ke blockchain dilakukan melalui Smart Contract Solidity via Ethers.js. Arsitektur ini mengeliminasi kebutuhan penyimpanan data pribadi di blockchain, dan menekan biaya transaksi melalui fitur *Bulk Import* yang memproses ratusan data dalam satu transaksi.
 
 ---
 
@@ -57,10 +57,10 @@ Secure Hash Algorithm 256-bit (SHA-256) adalah fungsi hash kriptografi yang meng
 
 Penelitian mengenai pemanfaatan teknologi desentralisasi untuk sektor pendidikan telah banyak dieksplorasi. Grech dan Camilleri (2017) menyoroti potensi besar blockchain dalam mengamankan kredensial akademik, namun belum mengusulkan arsitektur teknis yang spesifik. Turkanović et al. (2018) mengembangkan EduCTX, platform berbasis blockchain untuk transfer kredit akademik. Meskipun berhasil mendemonstrasikan pertukaran data antar institusi, arsitekturnya masih mengandalkan penyimpanan *metadata* yang cukup besar secara *on-chain*, sehingga berpotensi terkendala skalabilitas. Solusi lain oleh Arenas dan Fernandez (2018) mengusulkan CredenceLedger, sistem berbasis *permissioned blockchain*. Sistem ini memecahkan masalah privasi, namun pembatasan *permissioned* mengurangi transparansi publik. Studi oleh Wibowo dkk. (2020) di Indonesia juga mengujicobakan penyimpanan metadata ijazah di blockchain privat, yang masih memerlukan biaya lisensi node (Wibowo et al., 2020).
 
-Penelitian ini (CertiChain) menyempurnakan kelemahan dari penelitian-penelitian terdahulu dengan menerapkan metode *Zero-Knowledge Hashing* pada jaringan blockchain publik EVM. Berikut adalah perbandingan posisi penelitian ini dengan penelitian sebelumnya:
+Penelitian ini (CredBlock) menyempurnakan kelemahan dari penelitian-penelitian terdahulu dengan menerapkan metode *Zero-Knowledge Hashing* pada jaringan blockchain publik EVM. Berikut adalah perbandingan posisi penelitian ini dengan penelitian sebelumnya:
 
 **Tabel 1. Matriks Perbandingan Penelitian (State of the Art)**
-| Kriteria | EduCTX (Turkanović, 2018) | CredenceLedger (Arenas, 2018) | Wibowo et al. (2020) | **CertiChain (Penelitian Ini)** |
+| Kriteria | EduCTX (Turkanović, 2018) | CredenceLedger (Arenas, 2018) | Wibowo et al. (2020) | **CredBlock (Penelitian Ini)** |
 |----------|-------------------------|---------------------------|----------------------|---------------------------------|
 | **Fokus Utama** | Transfer Kredit Mahasiswa | Verifikasi Dokumen | Verifikasi Ijazah | **Verifikasi Keaslian Ijazah** |
 | **Platform Blockchain** | Public Blockchain (ARK) | Permissioned Blockchain | Private Blockchain | **Public Blockchain (EVM)** |
@@ -68,7 +68,7 @@ Penelitian ini (CertiChain) menyempurnakan kelemahan dari penelitian-penelitian 
 | **Efisiensi Gas/Biaya** | Rendah (1 data = 1 Tx) | Sedang | Mahal | **Sangat Tinggi (*Bulk Import*)** |
 | **Perlindungan Privasi** | Pseudonimitas Dasar | Enkripsi Akses | Terbatas | **Sangat Tinggi (*Pre-image Resistance*)** |
 
-Dibandingkan sistem sebelumnya, CertiChain menggunakan algoritma SHA-256 pada antarmuka *client*. Dengan hanya mengirimkan hash berupa string tetap (`bytes32`) ke Smart Contract EVM, CertiChain menjamin privasi absolut karena data asli ijazah sama sekali tidak dilibarkan ke internet/blockchain.
+Dibandingkan sistem sebelumnya, CredBlock menggunakan algoritma SHA-256 pada antarmuka *client*. Dengan hanya mengirimkan hash berupa string tetap (`bytes32`) ke Smart Contract EVM, CredBlock menjamin privasi absolut karena data asli ijazah sama sekali tidak dilibarkan ke internet/blockchain.
 
 ---
 
@@ -76,14 +76,14 @@ Dibandingkan sistem sebelumnya, CertiChain menggunakan algoritma SHA-256 pada an
 
 ### 3.1 Pendekatan Pengembangan
 
-Pengembangan dApp CertiChain menggunakan metode **Iterative Incremental Development**. Siklus iterasi memungkinkan deteksi dini terhadap isu kompatibilitas antara Smart Contract (backend), antarmuka web (frontend), dan pustaka komunikasi Ethers.js, serta optimasi *gas fee* secara berkelanjutan.
+Pengembangan dApp CredBlock menggunakan metode **Iterative Incremental Development**. Siklus iterasi memungkinkan deteksi dini terhadap isu kompatibilitas antara Smart Contract (backend), antarmuka web (frontend), dan pustaka komunikasi Ethers.js, serta optimasi *gas fee* secara berkelanjutan.
 
 ### 3.2 Diagram Arsitektur Sistem
 
-Arsitektur CertiChain dirancang dengan pemisahan tanggung jawab ke dalam 4 lapisan independen:
+Arsitektur CredBlock dirancang dengan pemisahan tanggung jawab ke dalam 4 lapisan independen:
 
 > **[INSTRUKSI GAMBAR UNTUK KHALID]**
-> *Buat/Screenshot/Desain blok diagram arsitektur yang menunjukkan 4 kotak ini, letakkan gambarnya di sini dengan caption "Gambar 1. Blok Diagram Arsitektur Sistem CertiChain".*
+> *Buat/Screenshot/Desain blok diagram arsitektur yang menunjukkan 4 kotak ini, letakkan gambarnya di sini dengan caption "Gambar 1. Blok Diagram Arsitektur Sistem CredBlock".*
 > Kotak 1: Presentation Layer (HTML5, TailwindCSS)
 > Kotak 2: Application Logic (JavaScript, Web Crypto API/SHA-256)
 > Kotak 3: Integration Layer (Ethers.js v6 RPC Provider)
@@ -98,7 +98,7 @@ Arsitektur CertiChain dirancang dengan pemisahan tanggung jawab ke dalam 4 lapis
 
 ### 3.3 Desain Smart Contract
 
-Smart Contract CertiChain ditulis dalam bahasa Solidity v0.8.24 dan berfungsi sebagai buku besar desentralisasi (*Decentralized Ledger*). Struktur kodenya meliputi:
+Smart Contract CredBlock ditulis dalam bahasa Solidity v0.8.24 dan berfungsi sebagai buku besar desentralisasi (*Decentralized Ledger*). Struktur kodenya meliputi:
 - `admin` (address) — menyimpan alamat wallet *deployer* sebagai administrator tunggal.
 - `hashes` (mapping) — struktur data *key-value* O(1) untuk menyimpan validitas hash ijazah.
 - `storeHash()` & `storeMultipleHashes()` — fungsi *write* (berbayar gas fee) untuk menyimpan satu atau ratusan hash mahasiswa.
@@ -106,10 +106,10 @@ Smart Contract CertiChain ditulis dalam bahasa Solidity v0.8.24 dan berfungsi se
 
 ### 3.4 Use Case dan Alur Fungsional Sistem
 
-Sistem CertiChain beroperasi dengan melibatkan dua *actor* utama: Admin Kampus dan Pihak Verifikator (HRD/Perusahaan).
+Sistem CredBlock beroperasi dengan melibatkan dua *actor* utama: Admin Kampus dan Pihak Verifikator (HRD/Perusahaan).
 
 > **[INSTRUKSI GAMBAR UNTUK KHALID]**
-> *Buat Use Case Diagram yang memuat 2 Actor. Actor "Admin Kampus" menghubungkan ke aksi (Login Akun, Input Data Manual, Upload CSV Bulk Import, Simpan Hash ke Blockchain). Actor "Pihak Verifikator/HRD" menghubungkan ke aksi (Input Data Kandidat, Verifikasi Keaslian). Letakkan gambarnya di sini dengan caption "Gambar 2. Use Case Diagram Sistem CertiChain".*
+> *Buat Use Case Diagram yang memuat 2 Actor. Actor "Admin Kampus" menghubungkan ke aksi (Login Akun, Input Data Manual, Upload CSV Bulk Import, Simpan Hash ke Blockchain). Actor "Pihak Verifikator/HRD" menghubungkan ke aksi (Input Data Kandidat, Verifikasi Keaslian). Letakkan gambarnya di sini dengan caption "Gambar 2. Use Case Diagram Sistem CredBlock".*
 
 Sistem dibagi menjadi dua alur sekuensial:
 
@@ -136,7 +136,7 @@ Sistem dibagi menjadi dua alur sekuensial:
 
 ### 4.1 Hasil Implementasi Antarmuka (User Interface)
 
-Sistem CertiChain menghasilkan dua antarmuka web utama:
+Sistem CredBlock menghasilkan dua antarmuka web utama:
 1. **Dashboard Admin Kampus** (`index.html`): Fitur otentikasi, form manual, panel *Bulk Import* (CSV), kotak riwayat transaksi *real-time*, dan Toast Notification keberhasilan.
 2. **Portal Verifikasi HRD** (`verify.html`): Panel tunggal publik yang ramah pengguna untuk melakukan pencocokan data ijazah.
 
@@ -164,13 +164,13 @@ Pengujian interaksi *Smart Contract* dieksekusi menggunakan kerangka pengujian t
 Seluruh indikator pengujian mencatat status lulus 100% tanpa adanya kegagalan logik, membuktikan bahwa kontrak pintar berfungsi tanpa cacat kerentanan sebelum dinaikkan ke jaringan Ethereum *Mainnet*.
 
 > **[INSTRUKSI GAMBAR UNTUK KHALID]**
-> *Screenshot terminal VS Code yang menampilkan tulisan hijau "9 passing" dari hasil pengecekan `npx hardhat test`. Letakkan gambarnya di sini dengan caption "Gambar 6. Hasil Eksekusi Unit Test Smart Contract CertiChain pada Hardhat".*
+> *Screenshot terminal VS Code yang menampilkan tulisan hijau "9 passing" dari hasil pengecekan `npx hardhat test`. Letakkan gambarnya di sini dengan caption "Gambar 6. Hasil Eksekusi Unit Test Smart Contract CredBlock pada Hardhat".*
 
 ### 4.3 Analisis Perbandingan Penggunaan *Gas Fee* (Optimalisasi Bulk Import)
 
 Penyimpanan data secara *on-chain* menelan biaya (bensin transaksi / *gas-fee*). Setiap transaksi di Ethereum dikenakan biaya dasar (*base fee*) sebesar 21.000 GWEI. Jika Universitas ingin menginput 1.000 sarjana angkatan 2026 satu persatu (Individual Store), mereka akan mengirimkan 1.000 sinyal berbeda ke blockchain, memakan biaya sangat tinggi.
 
-CertiChain menanggulangi ini dengan metode *Batching Loop Protocol* (`storeMultipleHashes`). Menggunakan struktur `bytes32[] calldata`, 1.000 list mahasiswa di-hash seketika di peramban, dijadikan array CSV, dikirim dalam **1 Transaksi Tunggal**. Hal ini membuat tarif bayar blok dasar menjadi cukup diampu sekali.
+CredBlock menanggulangi ini dengan metode *Batching Loop Protocol* (`storeMultipleHashes`). Menggunakan struktur `bytes32[] calldata`, 1.000 list mahasiswa di-hash seketika di peramban, dijadikan array CSV, dikirim dalam **1 Transaksi Tunggal**. Hal ini membuat tarif bayar blok dasar menjadi cukup diampu sekali.
 
 **Tabel 3. Analisis Estimasi Pengurangan Beban Gas (Gas Optimization)**
 | Metode Transaksi Solidity | Unit Data Ijazah | Eksekusi Blok Jaringan | Biaya Dasar Transaksi |
@@ -178,7 +178,7 @@ CertiChain menanggulangi ini dengan metode *Batching Loop Protocol* (`storeMulti
 | Eksekusi Satu-Per-Satu (`storeHash`) | 1.000 Ijazah | 1.000 Pemanggilan | ~ 1.000x |
 | **Eksekusi Bulk Import via Array** (`storeMultipleHashes`) | **1.000 Ijazah** | **1 Pemanggilan Tunggal** | **~ 1x (Hemat >90%)** |
 
-Melalui simulasi ini, CertiChain terbukti tidak hanya kokoh dari sisi otentikasi, namun layak diadopsi untuk kapasitas skala kampus universitas padat yang mementingkan aspek biaya *Zero-Knowledge* yang sangat konomik.
+Melalui simulasi ini, CredBlock terbukti tidak hanya kokoh dari sisi otentikasi, namun layak diadopsi untuk kapasitas skala kampus universitas padat yang mementingkan aspek biaya *Zero-Knowledge* yang sangat konomik.
 
 ### 4.4 Analisis Celah Keamanan (*Security Avalanche Effect Analysis*)
 
@@ -195,14 +195,14 @@ Ketahanan keamanan verifikasi dApp dievaluasi menggunakan rekayasa *Brute-force 
 ### 5.1 Kesimpulan
 
 Berdasarkan perancangan, implementasi *Smart Contract*, serta pengumpulan metrik uji coba End-to-End, dapat ditarik konklusi pokok sebagai berikut:
-1. Arsitektur CertiChain berhasil membuktikan keandalan sistem verifikasi mandiri berbasis Jaringan Terdesentralisasi Ethereum (EVM) dengan skema pembiayaan gratis seumur hidup bagi pengguna Verifikator/HRD korporasi.
+1. Arsitektur CredBlock berhasil membuktikan keandalan sistem verifikasi mandiri berbasis Jaringan Terdesentralisasi Ethereum (EVM) dengan skema pembiayaan gratis seumur hidup bagi pengguna Verifikator/HRD korporasi.
 2. Penggunaan kriptografi komputasi lokal *Web Crypto API (SHA-256)* sangat mumpuni mengeliminir kebutuhan unggahan File PDF berat ke *server*. Sistem secara utuh mencapai target *Privacy by Design / Zero-Knowledge Proof* di mana profil pribadi pelamar tidak diketahui oleh node blockchain mana pun.
 3. Strategi modifikasi penyimpanan transaksi dalam skala makro/multi-array (*Bulk Import*) divalidasi sanggup menekan pembengkakan tarif (*gas-fee*) mendekati angka ekstrem (90% penghematan operasional dompet kampus) saat mendaftarkan ratusan ijazah massal dalam satu waktu antrean jaringan.
 4. Logika fungsional seluruh instrumen *contract backend Solidity* tervalidasi melewati rintangan *Black Box* Hardhat dengan *success-rate* murni 100%, menghapus risiko celah manipulasi ganda maupun akses otentikasi liar.
 
 ### 5.2 Saran
 
-Beberapa rekomendasi yang potensial ditempuh pihak peneliti berikutnya untuk mengoptimalkan ruang adaptasi skalabilitas nasional CertiChain meliputi:
+Beberapa rekomendasi yang potensial ditempuh pihak peneliti berikutnya untuk mengoptimalkan ruang adaptasi skalabilitas nasional CredBlock meliputi:
 1. Membawa integrasi arsitektur ke tahap pengajuan jaringan utama *Mainnet/Testnet (contoh: Polygon Amoy)* guna memastikan ekosistem benar-benar tertaut dengan server global internet.
 2. Menyisipkan integrasi teknologi *Account Abstraction EIP-4337 (Smart Wallet)* yang didampingi layanan *OAuth 2.0 Identity Server* bawaan Sistem Single Sign-On Universitas demi UX administrasi staf TU.
 3. Melekatkan standar fungsionalitas otomasi tambahan seperti pembuatan gambar stiker Kode-QR unik per kelulusan mahasiswa yang bila dipindai (Scan) dari kamera HRD seketika langsung menuju Portal Hash Verifikasi sistem EVM instan.

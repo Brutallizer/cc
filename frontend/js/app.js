@@ -5,7 +5,7 @@
  * 1. Menghubungkan ke jaringan blockchain (lokal Hardhat / MetaMask).
  * 2. Menerima input data mahasiswa dari form.
  * 3. Menghasilkan hash SHA-256 dari data mahasiswa.
- * 4. Mengirim hash ke smart contract CertiChain untuk disimpan di blockchain.
+ * 4. Mengirim hash ke smart contract CredBlock untuk disimpan di blockchain.
  * 
  * LIBRARY: Ethers.js v6 (dimuat via CDN di index.html)
  */
@@ -14,10 +14,10 @@
 // KONFIGURASI
 // ============================================================
 
-const CONTRACT_ADDRESS = "0xF20276816FDEb9f76Bd385086CEB8e44826B689b"; // <--- CertiChain V2 - Polygon Amoy
+const CONTRACT_ADDRESS = "0xcFDC83D3BbE8db338c99443B25375d5caB0eba27"; // <--- CredBlock - Polygon Amoy
 
 /**
- * ABI (Application Binary Interface) dari smart contract CertiChain.
+ * ABI (Application Binary Interface) dari smart contract CredBlock.
  * 
  * ABI adalah "kontrak" antara frontend dan smart contract.
  * Frontend perlu tahu fungsi apa saja yang tersedia di smart contract
@@ -75,7 +75,7 @@ async function loadInstitutionsDB() {
 async function connectBlockchain(method = 'auto') {
     let userAddress;
 
-    if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('certichain_login_method') === 'metamask')) {
+    if (method === 'metamask' || (method === 'auto' && window.ethereum && localStorage.getItem('credblock_login_method') === 'metamask')) {
         // --- JALUR METAMASK ---
         if (typeof window.ethereum === "undefined") {
             if (method === 'metamask') {
@@ -121,7 +121,9 @@ async function connectBlockchain(method = 'auto') {
                             throw new Error("Gagal menambahkan Polygon Amoy ke MetaMask.");
                         }
                     } else {
-                        throw new Error("Batal beralih ke jaringan jaringan Polygon Amoy.");
+                        // Jangan throw error jika sekedar batal ganti jaringan, biarkan user tetap connect tapi beda jaringan (nanti error saat transaksi)
+                        console.warn("User menolak ganti jaringan ke Amoy, tapi wallet tetap terkoneksi.");
+                        updateTxStatus("pending", "Peringatan: Anda tidak berada di jaringan Amoy!");
                     }
                 }
             }
@@ -132,14 +134,14 @@ async function connectBlockchain(method = 'auto') {
             userAddress = await signer.getAddress();
 
             // Simpan preferensi login agar auto-reconnect
-            localStorage.setItem('certichain_login_method', 'metamask');
+            localStorage.setItem('credblock_login_method', 'metamask');
             console.log("✅ Terhubung via MetaMask:", userAddress);
 
             // Dengarkan perubahan akun
             window.ethereum.on('accountsChanged', (accounts) => {
                 if (accounts.length > 0) window.location.reload();
                 else {
-                    localStorage.removeItem('certichain_login_method');
+                    localStorage.removeItem('credblock_login_method');
                     window.location.reload();
                 }
             });
@@ -152,16 +154,16 @@ async function connectBlockchain(method = 'auto') {
             return;
         }
 
-    } else if (method === 'google' || (method === 'auto' && localStorage.getItem("certichain_admin_wallet"))) {
+    } else if (method === 'google' || (method === 'auto' && localStorage.getItem("credblock_admin_wallet"))) {
         // --- JALUR GOOGLE (SIMULASI SMART WALLET) ---
-        let savedPrivateKey = localStorage.getItem("certichain_admin_wallet");
+        let savedPrivateKey = localStorage.getItem("credblock_admin_wallet");
 
         if (!savedPrivateKey) {
             if (method === 'google') {
                 // Di rilis publik ini, kita hardcode Private Key admin yang nantinya HARUS diisi saldo MATIC Testnet
                 savedPrivateKey = "0xc2701619eeb4142848d298211a7c88d26544dce27c1d1e4d211c717e8fc6375a";
-                localStorage.setItem("certichain_admin_wallet", savedPrivateKey);
-                localStorage.setItem('certichain_login_method', 'google');
+                localStorage.setItem("credblock_admin_wallet", savedPrivateKey);
+                localStorage.setItem('credblock_login_method', 'google');
             } else {
                 document.getElementById("loginOverlay").classList.remove("hidden");
                 return;
@@ -173,7 +175,7 @@ async function connectBlockchain(method = 'auto') {
             provider = new ethers.JsonRpcProvider("https://polygon-amoy-bor-rpc.publicnode.com");
             signer = new ethers.Wallet(savedPrivateKey, provider);
             userAddress = await signer.getAddress();
-            localStorage.setItem('certichain_login_method', 'google');
+            localStorage.setItem('credblock_login_method', 'google');
 
             console.log("✅ Terhubung via Smart Wallet (Google Auth)");
             console.log("   Admin address:", userAddress);
@@ -292,7 +294,7 @@ async function loadKementerianDashboard() {
         let approvedCount = 0;
 
         // Ambil pending DB dari simulasi B2B lokal
-        const localDB = JSON.parse(localStorage.getItem('certichain_pending_db') || "{}");
+        const localDB = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
 
         for (let i = 0; i < applicants.length; i++) {
             const wallet = applicants[i];
@@ -357,7 +359,7 @@ async function loadKementerianDashboard() {
 
 // Fungsi Approval dipanggil dari UI Tabel
 window.actionApprove = async function (wallet) {
-    if (!confirm('Yakin ingin menerima institusi ini mengakses CertiChain?')) return;
+    if (!confirm('Yakin ingin menerima institusi ini mengakses CredBlock?')) return;
     try {
         updateTxStatus('pending', 'Mengirim transaksi persetujuan...');
         const tx = await contract.approveInstitution(wallet);
@@ -367,12 +369,12 @@ window.actionApprove = async function (wallet) {
 
         updateTxStatus('success', 'Institusi berhasil diapprove!');
         // Pindahkan data JSON dr Antrian ke Data Resmi (Simulasi)
-        let localDB = JSON.parse(localStorage.getItem('certichain_pending_db') || "{}");
+        let localDB = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
         if (localDB[wallet]) {
             institutionsDB[wallet] = localDB[wallet];
             institutionsDB[wallet].verified = true;
             delete localDB[wallet];
-            localStorage.setItem('certichain_pending_db', JSON.stringify(localDB));
+            localStorage.setItem('credblock_pending_db', JSON.stringify(localDB));
         }
 
         loadKementerianDashboard(); // reload table
@@ -835,7 +837,7 @@ function updateTxStatus(status, message) {
  * Mendapatkan riwayat dari LocalStorage
  */
 function getHistory() {
-    const history = localStorage.getItem("certichain_history");
+    const history = localStorage.getItem("credblock_history");
     return history ? JSON.parse(history) : [];
 }
 
@@ -853,7 +855,7 @@ function addHistoryLog(nama, hash, txHash) {
     history.unshift(newRecord); // Tambah di paling atas
     // Batasi maksimum 50 list history agar tidak memberatkan browser
     if (history.length > 50) history.pop();
-    localStorage.setItem("certichain_history", JSON.stringify(history));
+    localStorage.setItem("credblock_history", JSON.stringify(history));
     renderHistory();
 }
 
@@ -861,11 +863,11 @@ function addHistoryLog(nama, hash, txHash) {
  * Menghitung Total Penghematan Gas (Asumsi 1 tx hemat 0.005 POL)
  */
 function updateGasSavings(jumlahDataBaru = 0) {
-    let savedTotal = parseInt(localStorage.getItem("certichain_gas_savings") || "0");
+    let savedTotal = parseInt(localStorage.getItem("credblock_gas_savings") || "0");
     if (jumlahDataBaru > 1) {
         // Jika import massal (lebih dari 1), hemat = n_data - 1 tx
         savedTotal += (jumlahDataBaru - 1);
-        localStorage.setItem("certichain_gas_savings", savedTotal.toString());
+        localStorage.setItem("credblock_gas_savings", savedTotal.toString());
     }
 
     // Asumsi per transaksi reguler sekitar 0.005 POL
@@ -935,7 +937,7 @@ const btnClear = document.getElementById("btnClearHistory");
 if (btnClear) {
     btnClear.addEventListener("click", () => {
         if (confirm("Hapus seluruh histori aktivitas dari tampilan lokal? (Data di blockchain tetap aman)")) {
-            localStorage.removeItem("certichain_history");
+            localStorage.removeItem("credblock_history");
             renderHistory();
         }
     });
@@ -996,7 +998,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnGoogleLogin) {
         btnGoogleLogin.addEventListener("click", () => {
             // Hapus session lama jika user klik tombol secara manual (untuk force new wallet)
-            localStorage.removeItem("certichain_admin_wallet");
+            localStorage.removeItem("credblock_admin_wallet");
             connectBlockchain('google');
         });
     }

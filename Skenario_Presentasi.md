@@ -1,4 +1,4 @@
-# 🎓 SKENARIO PRESENTASI CERTICHAIN TERBARU (100% LOKAL)
+# 🎓 SKENARIO PRESENTASI CREDBLOCK TERBARU (100% LOKAL)
 
 Skenario ini disusun KHUSUS untuk kelancaran Ujian Tugas Akhir Anda menggunakan lingkungan **Localhost** agar terbebas dari masalah Gas Fee habis atau Internet lelet.
 
@@ -30,7 +30,7 @@ Skenario ini disusun KHUSUS untuk kelancaran Ujian Tugas Akhir Anda menggunakan 
 
 ### 👨‍🏫 TAHAP 1: FITUR OTENTIKASI (ACCOUNT ABSTRACTION)
 *(Buka layar Terminal & Browser ke `http://localhost:3000`)*
-> **Skrip Anda:** "Bapak/Ibu Dosen, ini adalah CertiChain. Berbeda dengan aplikasi jadul yang butuh Username dan Password, aplikasi Web3 ini menggunakan konsep *Smart Wallet*."
+> **Skrip Anda:** "Bapak/Ibu Dosen, ini adalah CredBlock. Berbeda dengan aplikasi jadul yang butuh Username dan Password, aplikasi Web3 ini menggunakan konsep *Smart Wallet*."
 1. Klik tombol **"Sign in with Google"**.
 2. *Poin Fitur:* **Automated Wallet Injection**. Jelaskan bahwa di belakang layar, sistem otomatis menyuntikkan Private Key kampus untuk mengubah browser ini menjadi *Node Transaksi*.
 3. Tunjukkan di navbar kanan ada tulisan **"Terhubung" (Warna Hijau)** dan teks **"0xf39F..."**.

@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="CertiChain - Sistem Verifikasi Ijazah Berbasis Blockchain. Dashboard Admin Kampus untuk menyimpan hash data mahasiswa ke blockchain.">
-    <title>CertiChain — Dashboard Admin Kampus</title>
+        content="CredBlock - Sistem Verifikasi Ijazah Berbasis Blockchain. Dashboard Admin Kampus untuk menyimpan hash data mahasiswa ke blockchain.">
+    <title>CredBlock — Dashboard Admin Kampus</title>
 
     <!-- Google Fonts: Inter (tipografi modern & profesional) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,7 +67,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-primary-800 leading-tight">CertiChain</h1>
+                    <h1 class="text-lg font-bold text-primary-800 leading-tight">CredBlock</h1>
                     <p class="text-xs text-gray-500">Blockchain Degree Verification</p>
                 </div>
             </div>
@@ -107,7 +107,7 @@
                     </div>
                     <!-- Logout Button -->
                     <button id="btnLogout"
-                        onclick="localStorage.removeItem('certichain_admin_wallet'); window.location.reload();"
+                        onclick="localStorage.removeItem('credblock_admin_wallet'); window.location.reload();"
                         class="ml-2 p-2 relative z-50 pointer-events-auto text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                         title="Keluar / Ganti Akun">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,55 +140,18 @@
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Login Admin Kampus</h2>
                 <p class="text-gray-500 text-sm mb-8">Masuk menggunakan akun institusi untuk mengakses Smart Contract
-                    CertiChain di jaringan Polygon.</p>
+                    CredBlock di jaringan Polygon.</p>
 
                 <div class="flex flex-col gap-3">
                     <!-- Tombol MetaMask (Web3 Asli) -->
                     <button id="btnMetaMaskLogin"
                         class="w-full relative flex items-center justify-center gap-3 px-6 py-3.5 bg-orange-50 border-2 border-orange-200 text-orange-700 font-bold rounded-xl hover:bg-orange-100 hover:border-orange-300 transition-all shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 111 111" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M101.996 28.5204L81.5649 14.288L65.5786 35.3343L101.996 28.5204Z" fill="#E17726" />
-                            <path d="M9.16538 28.5204L29.5962 14.288L45.5825 35.3343L9.16538 28.5204Z" fill="#E27625" />
-                            <path
-                                d="M69.9678 77.4087L82.1643 89.658L98.508 86.8299C98.508 86.8299 87.5259 104.991 87.1662 105.429C86.7265 105.948 76.5414 102.321 76.5414 102.321L69.9678 77.4087Z"
-                                fill="#E27625" />
-                            <path
-                                d="M41.1923 77.4087L28.9959 89.658L12.6521 86.8299C12.6521 86.8299 23.6343 104.991 23.9939 105.429C24.4336 105.948 34.6188 102.321 34.6188 102.321L41.1923 77.4087Z"
-                                fill="#E27625" />
-                            <path d="M43.3444 48.0163L45.1633 60.1585L29.0229 65.6558L43.3444 48.0163Z"
-                                fill="#E27625" />
-                            <path d="M67.8188 48.0163L65.9998 60.1585L82.1402 65.6558L67.8188 48.0163Z"
-                                fill="#E27625" />
-                            <path d="M34.6186 102.321L48.1691 95.8354L41.1921 77.4082L34.6186 102.321Z"
-                                fill="#D5BFB2" />
-                            <path d="M76.5414 102.321L62.991 95.8354L69.968 77.4082L76.5414 102.321Z" fill="#D5BFB2" />
-                            <path
-                                d="M51.1093 72.8066L48.1709 95.8359L55.5804 100.22L62.99 95.8359L60.0515 72.8066L55.5804 70.3686L51.1093 72.8066Z"
-                                fill="#E27625" />
-                            <path d="M41.1921 77.4082L48.1691 95.8354L51.1075 72.8061L33.7153 73.1932L41.1921 77.4082Z"
-                                fill="#F6851B" />
-                            <path d="M69.9678 77.4082L62.9908 95.8354L60.0524 72.8061L77.4446 73.1932L69.9678 77.4082Z"
-                                fill="#F6851B" />
-                            <path d="M82.1404 65.6559L77.4448 73.1933L60.0524 72.8062L65.9999 60.1587L82.1404 65.6559Z"
-                                fill="#CC6228" />
-                            <path d="M29.0227 65.6559L33.7183 73.1933L51.1107 72.8062L45.1631 60.1587L29.0227 65.6559Z"
-                                fill="#CC6228" />
-                            <path
-                                d="M65.9997 60.1586L55.5801 70.368L45.1604 60.1586L48.3188 56.4678L55.5801 58.7523L62.8413 56.4678L65.9997 60.1586Z"
-                                fill="#F6851B" />
-                            <path
-                                d="M67.8188 48.0166L62.8413 56.4679L55.5801 58.7524V41.056L65.5786 35.334L67.8188 48.0166Z"
-                                fill="#E27625" />
-                            <path
-                                d="M43.3442 48.0166L48.3218 56.4679L55.583 58.7524V41.056L45.5845 35.334L43.3442 48.0166Z"
-                                fill="#E27625" />
-                            <path d="M55.5801 41.056V58.7524H55.583V41.056H55.5801Z" fill="#CC6228" />
-                            <path
-                                d="M101.996 28.5205L87.8286 54.02L82.1404 65.656L67.8188 48.0167L65.5786 35.3341L81.5649 14.2878L101.996 28.5205Z"
-                                fill="#F6851B" />
-                            <path
-                                d="M9.16541 28.5205L23.3328 54.02L29.0209 65.656L43.3424 48.0167L45.5826 35.3341L29.5963 14.2878L9.16541 28.5205Z"
-                                fill="#F6851B" />
+                        <!-- Modern Wallet Abstract Icon -->
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="5" width="20" height="14" rx="3" stroke="#F6851B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18 12H22" stroke="#F6851B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="15" cy="12" r="1.5" fill="#F6851B"/>
+                            <path d="M22 10V14" stroke="#F6851B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span id="loginMetaMaskText">Connect MetaMask</span>
                     </button>
@@ -770,7 +733,7 @@
     <!-- ============================================================ -->
     <footer class="border-t border-gray-200 mt-12">
         <div class="max-w-6xl mx-auto px-6 py-6 text-center">
-            <p class="text-xs text-gray-400">CertiChain &copy; 2026 — Tugas Akhir Sistem Informasi. Blockchain-based
+            <p class="text-xs text-gray-400">CredBlock &copy; 2026 — Tugas Akhir Sistem Informasi. Blockchain-based
                 Degree Verification System.</p>
         </div>
     </footer>

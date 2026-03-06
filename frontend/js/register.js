@@ -1,4 +1,4 @@
-const CONTRACT_ADDRESS = "0xF20276816FDEb9f76Bd385086CEB8e44826B689b"; // CertiChain V2 - Polygon Amoy
+const CONTRACT_ADDRESS = "0xcFDC83D3BbE8db338c99443B25375d5caB0eba27"; // CredBlock - Polygon Amoy
 const CONTRACT_ABI = [
     "function applyForRegistration(string memory _name)",
     "function institutions(address) view returns (string name, uint8 status)"
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerForm.addEventListener('submit', handleRegistration);
 
     // Auto connect attempt
-    if (window.ethereum && localStorage.getItem('certichain_register_method') === 'metamask') {
+    if (window.ethereum && localStorage.getItem('credblock_register_method') === 'metamask') {
         connectWallet();
     }
 });
@@ -72,7 +72,8 @@ async function connectWallet() {
                         }]
                     });
                 } else {
-                    throw new Error("Pindah jaringan Amoy dibatalkan");
+                    console.warn("User menolak pindah jaringan ke Amoy. Koneksi jalan dengan peringatan.");
+                    showToast('pending', "Peringatan: Jaringan Anda bukan Amoy. Transaksi mungkin gagal.");
                 }
             }
         }
@@ -82,7 +83,7 @@ async function connectWallet() {
         userAddress = await signer.getAddress();
 
         contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-        localStorage.setItem('certichain_register_method', 'metamask');
+        localStorage.setItem('credblock_register_method', 'metamask');
 
         // Check current status
         await checkStatus();
@@ -170,9 +171,9 @@ async function handleRegistration(e) {
             address: document.getElementById('regAddress').value
         };
 
-        let localQueue = JSON.parse(localStorage.getItem('certichain_pending_db') || "{}");
+        let localQueue = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
         localQueue[userAddress] = pendingMetadata;
-        localStorage.setItem('certichain_pending_db', JSON.stringify(localQueue));
+        localStorage.setItem('credblock_pending_db', JSON.stringify(localQueue));
 
         // Pindah layar ke pendaftaran sukses
         await checkStatus();

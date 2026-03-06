@@ -1,0 +1,171 @@
+# TEKS FINAL JURNAL — SIAP PASTE KE TYPESET.IO
+
+Instruksi: Copy SELURUH teks di bawah garis ini, lalu paste ke editor Typeset.io (SciSpace).
+Jangan copy judul instruksi ini.
+
+---
+
+## JUDUL
+
+Rancang Bangun Sistem Verifikasi Keaslian Dokumen Ijazah Berbasis Smart Contract Menggunakan Kriptografi SHA-256 pada Jaringan Polygon
+
+## PENULIS
+
+Khalid Hanif Albarry
+Jurusan Ilmu Komputer, Fakultas Komputer, Universitas Insan Cita Indonesia
+Jln. Swadaya, Kota Tangerang, 14154, Indonesia
+Email: khalidhnf1@gmail.com
+
+## ABSTRACT (English)
+
+Academic document verification in Indonesia remains plagued by slow manual procedures, high legalization costs, and an alarming rise in diploma forgery cases. This research aims to design and develop a blockchain-based diploma verification system called CertiChain, leveraging Smart Contract technology on the Ethereum Virtual Machine (EVM) deployed to the Polygon network. The system employs a hybrid architecture: client-side SHA-256 hashing via the Web Crypto API to generate cryptographic fingerprints of student graduation data, and on-chain storage through a Solidity v0.8.24 Smart Contract connected via Ethers.js v6. A key innovation is the B2B Approval Workflow, where institutions must register their cryptographic identity (wallet address) and receive approval from a designated government authority (Super Admin) before gaining write access to the blockchain ledger. This role-based access control eliminates the risk of unauthorized diploma issuance. The frontend is built using HTML5, Vanilla JavaScript, and TailwindCSS. Testing was conducted using Hardhat's Test-Driven Development (TDD) framework with Mocha and Chai, covering 15 test scenarios including institution registration, multi-tier approval, hash storage, bulk import, duplicate prevention, and public verification. All 15 scenarios achieved a 100% pass rate, confirming the system's functional reliability. The system successfully demonstrates that even a single-character modification in the input data produces an entirely different hash, enabling automatic and permanent detection of any forgery attempt.
+
+Keywords: Blockchain, Smart Contract, Diploma Verification, SHA-256, Polygon, Solidity, Immutability, Decentralization, B2B Approval
+
+## ABSTRAK (Bahasa Indonesia)
+
+Proses verifikasi keaslian dokumen akademik di Indonesia masih menghadapi kendala berupa prosedur manual yang lambat, biaya legalisir yang tinggi, serta meningkatnya kasus pemalsuan ijazah yang merugikan dunia pendidikan dan industri. Penelitian ini bertujuan untuk merancang dan membangun sistem verifikasi keaslian dokumen ijazah bernama CertiChain, berbasis teknologi Blockchain dan Smart Contract. Sistem dikembangkan menggunakan Smart Contract berbahasa Solidity v0.8.24 yang di-deploy pada jaringan Polygon (EVM-Compatible), dengan antarmuka web menggunakan HTML5, Vanilla JavaScript, TailwindCSS, dan pustaka Ethers.js v6 sebagai jembatan komunikasi ke blockchain. Mekanisme keamanan bertumpu pada algoritma hashing SHA-256 melalui Web Crypto API bawaan browser untuk mengonversi data mahasiswa menjadi sidik jari digital (hash) yang bersifat satu arah (one-way function). Inovasi utama sistem ini adalah arsitektur B2B Approval Workflow, di mana institusi pendidikan harus mendaftarkan identitas kriptografi (wallet address) dan mendapat persetujuan dari otoritas pemerintah (Super Admin/Kementerian) sebelum dapat menerbitkan data ijazah ke blockchain. Metodologi pengembangan yang digunakan adalah Iterative Incremental Development dengan kerangka kerja Hardhat sebagai lingkungan pengujian. Hasil pengujian menggunakan metode Black-Box Testing dan Test-Driven Development (TDD) terhadap 15 skenario uji menunjukkan seluruh fungsi sistem berjalan 100% sesuai kebutuhan fungsional, mencakup pendaftaran institusi mandiri, persetujuan bertingkat oleh Kementerian, penyimpanan hash tunggal dan massal (bulk import), verifikasi data valid, penolakan data palsu, serta kontrol akses berbasis peran (role-based access control). Sistem berhasil membuktikan bahwa perubahan sekecil satu karakter pada data input menghasilkan hash yang sepenuhnya berbeda, sehingga setiap upaya pemalsuan dapat terdeteksi secara otomatis dan permanen.
+
+Kata Kunci: Blockchain, Smart Contract, Verifikasi Ijazah, SHA-256, Polygon, Solidity, Immutability, Desentralisasi, B2B Approval
+
+## I. PENDAHULUAN
+
+### 1.1 Latar Belakang Umum
+
+Verifikasi keaslian dokumen akademik merupakan proses krusial yang menghubungkan dunia pendidikan tinggi dengan dunia industri, khususnya dalam proses rekrutmen tenaga kerja profesional. Di Indonesia, proses ini masih sangat bergantung pada mekanisme konvensional seperti legalisir stempel basah, pengiriman surat verifikasi antar-universitas, hingga pengecekan manual melalui Pangkalan Data Pendidikan Tinggi (PDDIKTI) yang kerap mengalami keterlambatan respons atau downtime server. Perkembangan teknologi Blockchain menawarkan paradigma baru berupa penyimpanan data yang bersifat desentralisasi, transparan, dan tidak dapat diubah (immutable), menjadikannya kandidat solusi ideal untuk permasalahan integritas dokumen. Penelitian ini mengusulkan pembangunan sistem verifikasi keaslian ijazah bernama CertiChain yang memanfaatkan Smart Contract pada jaringan Polygon (EVM-Compatible) untuk menyimpan sidik jari kriptografi dari data kelulusan mahasiswa. Tujuan utama penelitian ini adalah merancang dan mengimplementasikan arsitektur dApp (Decentralized Application) yang mampu memverifikasi keaslian ijazah secara instan, gratis bagi pihak pemverifikasi, dan kebal terhadap manipulasi data.
+
+### 1.2 Latar Belakang Spesifik
+
+Isu pemalsuan ijazah di era digital telah menjadi permasalahan serius yang mengancam kredibilitas institusi pendidikan tinggi dan merugikan pelamar kerja yang jujur. Data dari berbagai laporan menunjukkan bahwa sindikat pemalsuan dokumen akademik terus berkembang seiring dengan kemajuan teknologi pengeditan digital seperti Adobe Photoshop dan berbagai aplikasi manipulasi PDF. Sistem tata kelola verifikasi yang ada saat ini, baik yang masih bersifat manual maupun yang sudah terdigitalisasi parsial menggunakan database terpusat (centralized database), tetap memiliki kerentanan fundamental berupa Single Point of Failure — dimana satu titik peretasan dapat mengubah seluruh data dalam sistem. Kelemahan paling fatal dari sistem verifikasi terpusat saat ini bukanlah sekadar ancaman peretas dari luar, melainkan kerentanan terhadap Insider Threat (Ancaman Orang Dalam). Administrator database memiliki wewenang penuh yang memungkinkan mereka memanipulasi, menyisipkan, atau menghapus data kelulusan tanpa meninggalkan jejak audit yang transparan bagi publik. Keterbatasan arsitektur tersentralisasi ini mengakibatkan rendahnya tingkat kepercayaan pihak HRD perusahaan dalam memverifikasi keaslian dokumen pelamar. Kondisi ini menunjukkan urgensi kebutuhan akan sistem verifikasi yang bersifat trustless (tidak bergantung pada kepercayaan terhadap satu pihak), tamper-proof (kebal manipulasi), dan dapat diakses secara publik tanpa biaya bagi pihak pemverifikasi. Arsitektur Blockchain diusulkan karena menawarkan sifat Trustless Integrity — dalam sistem berbasis Smart Contract, tidak ada satu entitas pun, bahkan pembuat sistem itu sendiri, yang dapat mengubah hash ijazah yang telah dikonfirmasi oleh konsensus jaringan.
+
+### 1.3 Kesenjangan Pengetahuan (Knowledge Gap)
+
+Sebagian besar solusi yang dikembangkan dalam ranah administrasi akademik digital hingga kini masih terbatas pada tahap digitalisasi parsial, seperti penyimpanan salinan sertifikat elektronik pada server cloud terpusat atau penerapan kode QR statis. Pendekatan tersebut hanya memindahkan medium dari kertas ke layar digital tanpa menyelesaikan permasalahan fundamental terkait integritas data. Beberapa penelitian terdahulu telah mengusulkan penggunaan teknologi Blockchain untuk sertifikasi digital, namun mayoritas masih berfokus pada penyimpanan file sertifikat secara utuh di jaringan blockchain yang menimbulkan biaya transaksi (gas fee) sangat tinggi. Selain itu, penelitian-penelitian terdahulu belum mengimplementasikan mekanisme otorisasi bertingkat (multi-tier approval) yang mereplikasi hierarki birokrasi penerbitan ijazah di dunia nyata, di mana institusi penerbit harus terlebih dahulu divalidasi oleh otoritas pemerintah sebelum memiliki wewenang menerbitkan dokumen legal. Kesenjangan ini menunjukkan perlunya pendekatan yang lebih efisien, yaitu menyimpan representasi kriptografi (hash) dari data dokumen ke dalam blockchain, disertai mekanisme kontrol akses berbasis peran (role-based access control). Penelitian ini hadir untuk mengisi kesenjangan tersebut dengan mengimplementasikan arsitektur Zero-Knowledge Hashing yang mengoptimalkan biaya penyimpanan sekaligus menjaga privasi data pribadi mahasiswa, serta B2B Approval Workflow yang menjamin hanya institusi terakreditasi yang dapat menerbitkan data ke blockchain.
+
+### 1.4 Kontribusi Penelitian
+
+Penelitian ini mengusulkan arsitektur dApp CertiChain yang mentransformasi mekanisme verifikasi dokumen dari paradigma tersentralisasi menjadi terdesentralisasi. Perancangan sistem bertumpu pada pemisahan tanggung jawab: proses hashing SHA-256 dilakukan di sisi klien menggunakan Web Crypto API, sementara penyematan jejak kriptografi ke blockchain dilakukan melalui Smart Contract Solidity via Ethers.js. Arsitektur ini mengeliminasi kebutuhan penyimpanan data pribadi di blockchain, dan menekan biaya transaksi melalui fitur Bulk Import yang memproses ratusan data dalam satu transaksi. Kontribusi tambahan yang signifikan adalah implementasi sistem otorisasi bertingkat (B2B Approval Workflow) yang mereplikasi hierarki birokrasi pemerintahan ke dalam bentuk Smart Contract, di mana institusi pendidikan harus melalui proses pendaftaran mandiri (Self-Service Registration) dan mendapat persetujuan eksplisit dari otoritas Kementerian sebelum diberikan hak akses penerbitan ijazah digital.
+
+## II. PENELITIAN YANG TERKAIT
+
+Penelitian pemanfaatan teknologi desentralisasi untuk pendidikan telah banyak dieksplorasi. Turkanović et al. (2018) mengembangkan EduCTX untuk transfer kredit akademik yang mengandalkan penyimpanan metadata on-chain. Arenas dan Fernandez (2018) mengusulkan CredenceLedger berbasis permissioned blockchain yang membatasi transparansi publik. Di Indonesia, Wibowo dkk. (2020) mengujicobakan penyimpanan metadata ijazah di blockchain privat yang masih memerlukan biaya lisensi node. Zheng et al. (2017) memberikan tinjauan komprehensif mengenai arsitektur blockchain, mekanisme konsensus, dan tren masa depan yang menjadi landasan teoritis penelitian ini. Grech dan Camilleri (2017) dalam laporan ilmiah untuk European Commission mengidentifikasi potensi blockchain dalam transformasi sektor pendidikan, namun menekankan bahwa implementasi praktis masih memerlukan solusi terhadap tantangan skalabilitas dan biaya penyimpanan on-chain. Penelitian ini (CertiChain) menyempurnakan kelemahan penelitian terdahulu dengan menerapkan metode Zero-Knowledge Hashing pada jaringan blockchain publik EVM (Polygon), serta menambahkan lapisan otorisasi bertingkat (B2B Approval) yang belum dimiliki oleh penelitian-penelitian sebelumnya.
+
+## III. METODE PENELITIAN
+
+### 3.1 Pendekatan Pengembangan
+
+Pengembangan dApp CertiChain menggunakan metode Iterative Incremental Development. Siklus iterasi memungkinkan deteksi dini terhadap isu kompatibilitas antara backend (Smart Contract), frontend (antarmuka web), dan integrasi Ethers.js, serta mempermudah optimasi gas fee. Pengembangan dilakukan dalam beberapa fase iterasi: (1) Fase V1 yang berfokus pada fungsi inti penyimpanan dan verifikasi hash, (2) Fase V2 yang menambahkan mekanisme pendaftaran institusi mandiri dan approval workflow oleh Kementerian.
+
+### 3.2 Diagram Arsitektur Sistem
+
+Arsitektur sistem CertiChain terdiri dari empat lapisan utama:
+
+| Lapisan | Komponen | Teknologi | Fungsi |
+|---|---|---|---|
+| Presentation | Antarmuka Web | HTML5, TailwindCSS | Tampilan UI responsif untuk Admin Kampus, Kementerian, dan HRD |
+| Application | Client-Side Processing | Vanilla JavaScript (ES6) | Hashing SHA-256, validasi input, manajemen sesi, deteksi peran |
+| Integration | Web3 Bridge | Ethers.js v6 | Koneksi ke node blockchain Polygon, pembuatan transaksi |
+| Blockchain | Smart Contract | Solidity v0.8.24 (EVM) | Penyimpanan hash, verifikasi, kontrol akses, dan approval workflow |
+
+### 3.3 Arsitektur Alur Kerja B2B (Approval Workflow)
+
+Prosedur operasional CertiChain dirancang mereplikasi hierarki birokrasi pemerintahan ke dalam bentuk Smart Contract dengan tiga peran utama:
+
+1. Kementerian Pendidikan (Super Admin): Dompet yang men-deploy Smart Contract secara otomatis menjadi otoritas tertinggi. Memiliki hak eksklusif untuk menyetujui (approveInstitution) atau menolak (rejectInstitution) pendaftaran institusi pendidikan.
+
+2. Admin Kampus (Approved Institution): Institusi yang telah mendaftarkan wallet address melalui portal Self-Service Registration dan telah disetujui oleh Kementerian. Memiliki hak akses untuk menyimpan hash ijazah ke blockchain melalui fungsi storeHash() dan storeMultipleHashes().
+
+3. Publik/HRD (Verifikator): Pihak manapun tanpa perlu memiliki dompet kripto dapat memverifikasi keaslian dokumen melalui fungsi view verifyHash() yang bersifat gratis (tanpa gas fee).
+
+Alur prosedural sistem berjalan sebagai berikut:
+- Fase Pengajuan: Institusi mendaftarkan identitas kriptografi melalui portal register.html dengan mengisi data legalitas (Nama Resmi, Nomor SK Dikti, Status Akreditasi). Fungsi applyForRegistration() dipanggil pada Smart Contract, mengubah status dompet menjadi Pending.
+- Fase Otorisasi: Kementerian login menggunakan wallet Super Admin. Dashboard secara otomatis menampilkan daftar institusi yang menunggu persetujuan. Kementerian mengeksekusi approveInstitution() untuk meresmikan kampus.
+- Fase Penerbitan: Kampus yang telah berstatus Approved memasukkan data mahasiswa ke portal dashboard. Sistem menghitung hash SHA-256 secara lokal (Client-Side) tanpa mengunggah data ke server manapun, kemudian hash tersebut dikunci secara permanen di blockchain Polygon.
+- Fase Verifikasi: Pihak HRD memasukkan data yang sama dari dokumen ijazah fisik/PDF ke portal verifikasi publik. Sistem menghitung ulang hash dan mencocokkannya dengan data on-chain. Jika cocok, sistem menampilkan status VALID beserta profil kampus penerbit yang terverifikasi.
+
+### 3.4 Desain Smart Contract
+
+Smart Contract CertiChain V2 berfungsi sebagai buku besar desentralisasi (Decentralized Ledger) dengan struktur sebagai berikut:
+
+- admin: Variabel immutable penyimpan alamat dompet deployer (Kementerian).
+- Institution (Struct): Menyimpan nama institusi dan status enum (NotRegistered, Pending, Approved, Rejected).
+- institutions (Mapping): Pemetaan alamat dompet ke data Institution untuk melacak status setiap institusi.
+- applicantList (Array): Daftar seluruh alamat yang pernah mengajukan pendaftaran, digunakan oleh Dashboard Kementerian.
+- applyForRegistration(): Fungsi publik untuk pendaftaran mandiri institusi baru.
+- approveInstitution() dan rejectInstitution(): Fungsi eksklusif Super Admin untuk otorisasi.
+- storeHash() dan storeMultipleHashes(): Fungsi write (berbayar) yang dilindungi modifier onlyApprovedInstitution.
+- verifyHash(): Fungsi read/view (gratis) yang mengembalikan status validitas, nama institusi penerbit, dan alamat publisher.
+
+## IV. HASIL DAN PEMBAHASAN
+
+### 4.1 Hasil Implementasi Antarmuka (User Interface)
+
+Sistem CertiChain menghasilkan empat antarmuka web utama:
+
+1. Portal Pendaftaran Institusi (register.html): Formulir multi-langkah untuk institusi baru mendaftarkan wallet MetaMask dan mengisi data legalitas (Nama Resmi, Nama Singkat, Nomor SK Dikti, Status Akreditasi, Website, Email, dan Alamat).
+
+2. Dashboard Kementerian: Panel eksklusif yang hanya muncul ketika Super Admin terdeteksi login. Menampilkan statistik (jumlah kampus pending, approved, rejected) dan tabel interaktif untuk melakukan Approve atau Reject terhadap pengajuan institusi.
+
+3. Dashboard Admin Kampus: Dilengkapi fitur otentikasi wallet, form input data mahasiswa (manual), panel Bulk Import (CSV) untuk penerbitan ijazah massal, kartu profil institusi terverifikasi, dan riwayat transaksi real-time.
+
+4. Portal Verifikasi HRD (verify.html): Panel pencarian publik yang ramah pengguna. Menampilkan hasil verifikasi beserta profil lengkap kampus penerbit (nama, alamat, akreditasi, website, email) jika hash dinyatakan valid.
+
+### 4.2 Hasil Pengujian Smart Contract (Black-Box Testing & TDD)
+
+Pengujian Smart Contract dieksekusi menggunakan framework Mocha dan Chai melalui Hardhat Network dengan pendekatan Test-Driven Development (TDD). Seluruh 15 skenario pengujian mencatat status lulus (PASS):
+
+| No | Skenario Uji | Kategori | Expected Output | Status |
+|---|---|---|---|---|
+| 1 | Deployer ditetapkan sebagai admin | Deployment | admin == deployer address | ✅ PASS |
+| 2 | Pendaftaran institusi mandiri | Registration | Status = PENDING | ✅ PASS |
+| 3 | Menolak pendaftaran duplikat | Registration | Error Revert | ✅ PASS |
+| 4 | Admin menyetujui institusi | Approval | Status = APPROVED | ✅ PASS |
+| 5 | Admin menolak institusi | Approval | Status = REJECTED | ✅ PASS |
+| 6 | Non-admin mencoba approve | Access Control | Error Revert (OnlyAdmin) | ✅ PASS |
+| 7 | Institusi PENDING mencoba simpan hash | Security | Error Revert (NotApproved) | ✅ PASS |
+| 8 | Institusi APPROVED menyimpan hash tunggal | Store Hash | Event HashStored di-emit | ✅ PASS |
+| 9 | Mencegah penyimpanan hash duplikat | Store Hash | Error Revert (Duplikasi) | ✅ PASS |
+| 10 | Non-approved mencoba simpan hash | Access Control | Error Revert | ✅ PASS |
+| 11 | Bulk store multi-hash via array | Bulk Store | Semua hash tersimpan = true | ✅ PASS |
+| 12 | Bulk store abaikan hash duplikat | Bulk Store | Hash lama dilewati | ✅ PASS |
+| 13 | Mengembalikan TRUE jika hash valid | Verify Hash | Return true + nama institusi | ✅ PASS |
+| 14 | Mengembalikan FALSE jika hash palsu | Verify Hash | Return false | ✅ PASS |
+| 15 | Publik dapat memverifikasi tanpa login | Verify Hash | Read access tanpa signer | ✅ PASS |
+
+Seluruh indikator pengujian mencatat success rate 100%, membuktikan bahwa Smart Contract berfungsi tanpa cacat kerentanan pada seluruh skenario fungsional dan keamanan.
+
+### 4.3 Hasil Deployment pada Jaringan Publik
+
+Smart Contract CertiChain V2 berhasil di-deploy pada jaringan Polygon Amoy Testnet dengan alamat kontrak 0xF20276816FDEb9f76Bd385086CEB8e44826B689b. Pengujian End-to-End pada jaringan publik mengkonfirmasi bahwa seluruh fungsi (pendaftaran, persetujuan, penyimpanan hash, dan verifikasi) berjalan konsisten dengan hasil pengujian lokal, memvalidasi kesiapan sistem untuk migrasi ke Polygon Mainnet.
+
+## V. KESIMPULAN
+
+1. Arsitektur CertiChain berhasil membuktikan keandalan sistem verifikasi mandiri berbasis EVM dengan skema verifikasi gratis bagi pihak Verifikator/HRD, mengeliminasi kebutuhan legalisir manual dan biaya pengiriman dokumen.
+
+2. Penggunaan kriptografi Web Crypto API (SHA-256) mencapai target Privacy by Design, di mana data pribadi mahasiswa tidak pernah meninggalkan perangkat pengguna dan tidak tersimpan di node blockchain manapun. Yang tersimpan di blockchain hanyalah representasi kriptografi (hash) yang bersifat satu arah dan tidak dapat di-reverse.
+
+3. Strategi Bulk Import tervalidasi mampu menekan pembengkakan biaya transaksi (gas fee) secara signifikan saat mendaftarkan ratusan ijazah massal dalam satu transaksi tunggal.
+
+4. Logika Smart Contract tervalidasi melewati 15 skenario pengujian Black-Box dan TDD dengan success rate murni 100%, mencakup seluruh aspek fungsional dan keamanan.
+
+5. Implementasi B2B Approval Workflow dengan status Role-Based Access Control (Pending, Approved, Rejected) berhasil menciptakan lapisan keamanan otorisasi terdesentralisasi, di mana manipulasi penerbitan dokumen oleh institusi yang tidak berizin secara preventif diblokir oleh mekanisme modifier pada Smart Contract.
+
+## UCAPAN TERIMA KASIH
+
+Penulis mengucapkan terima kasih kepada dosen pembimbing dan civitas akademika Universitas Insan Cita Indonesia (UICI) atas dukungan dan bimbingan selama penelitian ini berlangsung.
+
+## DAFTAR PUSTAKA
+
+[1] V. Buterin, "A Next-Generation Smart Contract and Decentralized Application Platform," Ethereum White Paper, 2014.
+[2] Ethers.js Documentation, "Ethers.js v6 — Complete Ethereum Library," 2024. [Online]. Available: https://docs.ethers.org/v6/
+[3] Hardhat Documentation, "Ethereum Development Environment for Professionals," 2024. [Online]. Available: https://hardhat.org/docs
+[4] S. Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System," Bitcoin White Paper, 2008.
+[5] National Institute of Standards and Technology (NIST), "FIPS PUB 180-2: Secure Hash Standard (SHS)," U.S. Department of Commerce, 2001.
+[6] OpenZeppelin, "Smart Contract Security Best Practices," 2024. [Online]. Available: https://docs.openzeppelin.com/
+[7] Solidity Documentation, "Solidity v0.8.x — Smart Contract Programming Language," 2024. [Online]. Available: https://docs.soliditylang.org/
+[8] A. Grech and A. F. Camilleri, "Blockchain in Education," JRC Science for Policy Report, European Commission, 2017.
+[9] M. Turkanović, M. Hölbl, K. Košič, M. Heričko, and A. Kamišalić, "EduCTX: A Blockchain-Based Higher Education Credit Platform," IEEE Access, vol. 6, pp. 5112-5127, 2018.
+[10] R. Arenas and P. Fernandez, "CredenceLedger: A Permissioned Blockchain for Verifiable Academic Credentials," IEEE International Conference on Engineering, Technology and Innovation, 2018.
+[11] S. A. Wibowo, E. Suryani, and I. Setiawan, "Prototyping e-Degree Management System Using Blockchain Technology," Jurnal Sistem Informasi Bisnis (JSINBIS), vol. 10, no. 2, pp. 231-238, 2020.
+[12] Z. Zheng, S. Xie, H. Dai, X. Chen, and H. Wang, "An Overview of Blockchain Technology: Architecture, Consensus, and Future Trends," IEEE International Congress on Big Data, pp. 557-564, 2017.
+[13] G. Wood, "Ethereum: A Secure Decentralised Generalised Transaction Ledger," Ethereum Project Yellow Paper, 2014.

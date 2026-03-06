@@ -2,7 +2,7 @@ const { ethers } = require('ethers');
 
 async function testE2E() {
     console.log("=========================================");
-    console.log("   CERTICHAIN AMOY E2E INTEGRATION TEST ");
+    console.log("   CREDBLOCK AMOY E2E INTEGRATION TEST ");
     console.log("=========================================");
 
     const provider = new ethers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");

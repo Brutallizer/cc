@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 /**
- * @title CertiChain V2 (Platform Self-Service & Kementerian)
+ * @title CredBlock V2 (Platform Self-Service & Kementerian)
  * @author Tugas Akhir - Sistem Informasi
  * @notice Smart contract untuk verifikasi keaslian ijazah dengan sistem pendaftaran mandiri.
  */
-contract CertiChain {
+contract CredBlock {
 
     // ============================================================
     // STATE VARIABLES & ENUMS
@@ -62,12 +62,12 @@ contract CertiChain {
     // ============================================================
 
     modifier onlyAdmin() {
-        require(msg.sender == admin, "CertiChain: Akses ditolak. Hanya Kementerian (Super Admin) yang diizinkan.");
+        require(msg.sender == admin, "CredBlock: Akses ditolak. Hanya Kementerian (Super Admin) yang diizinkan.");
         _;
     }
 
     modifier onlyApprovedInstitution() {
-        require(institutions[msg.sender].status == Status.Approved, "CertiChain: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi.");
+        require(institutions[msg.sender].status == Status.Approved, "CredBlock: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi.");
         _;
     }
 
@@ -90,10 +90,10 @@ contract CertiChain {
      *      Legalitas detail disimpan di Off-Chain Database, blockchain cukup menyimpan nama & statusnya.
      */
     function applyForRegistration(string memory _name) public {
-        require(bytes(_name).length > 0, "CertiChain: Nama institusi tidak boleh kosong");
+        require(bytes(_name).length > 0, "CredBlock: Nama institusi tidak boleh kosong");
         Institution memory existing = institutions[msg.sender];
         
-        require(existing.status == Status.NotRegistered || existing.status == Status.Rejected, "CertiChain: Wallet Anda sudah terdaftar atau dalam antrean Pending");
+        require(existing.status == Status.NotRegistered || existing.status == Status.Rejected, "CredBlock: Wallet Anda sudah terdaftar atau dalam antrean Pending");
 
         // Simpan pendaftaran baru ke mapping
         institutions[msg.sender] = Institution({
@@ -115,7 +115,7 @@ contract CertiChain {
      * @notice Super Admin menyetujui pendaftaran kampus
      */
     function approveInstitution(address _wallet) public onlyAdmin {
-        require(institutions[_wallet].status == Status.Pending, "CertiChain: Tidak ada aplikasi Pending untuk wallet ini");
+        require(institutions[_wallet].status == Status.Pending, "CredBlock: Tidak ada aplikasi Pending untuk wallet ini");
         
         institutions[_wallet].status = Status.Approved;
         emit InstitutionApproved(_wallet, institutions[_wallet].name);
@@ -125,7 +125,7 @@ contract CertiChain {
      * @notice Super Admin menolak pendaftaran kampus
      */
     function rejectInstitution(address _wallet) public onlyAdmin {
-        require(institutions[_wallet].status == Status.Pending, "CertiChain: Tidak ada aplikasi Pending untuk wallet ini");
+        require(institutions[_wallet].status == Status.Pending, "CredBlock: Tidak ada aplikasi Pending untuk wallet ini");
         
         institutions[_wallet].status = Status.Rejected;
         emit InstitutionRejected(_wallet, institutions[_wallet].name);
@@ -135,7 +135,7 @@ contract CertiChain {
      * @notice Shortcut bagi Super Admin jika ingin mendaftarkan langsung secara manual tanpa antrian
      */
     function registerInstitutionDirectly(address _wallet, string memory _name) public onlyAdmin {
-        require(bytes(_name).length > 0, "CertiChain: Nama institusi tidak boleh kosong");
+        require(bytes(_name).length > 0, "CredBlock: Nama institusi tidak boleh kosong");
         
         if (institutions[_wallet].status == Status.NotRegistered) {
              allApplicants.push(_wallet);
@@ -157,7 +157,7 @@ contract CertiChain {
      * @notice Menyimpan (1) hash ijazah ke blockchain. Harus dari Kampus yang berstatus 'Approved'.
      */
     function storeHash(bytes32 _hash) public onlyApprovedInstitution {
-        require(hashes[_hash] == address(0), "CertiChain: Hash Ijazah sudah tersimpan sebelumnya");
+        require(hashes[_hash] == address(0), "CredBlock: Hash Ijazah sudah tersimpan sebelumnya");
 
         hashes[_hash] = msg.sender;
         emit HashStored(_hash, msg.sender, block.timestamp);

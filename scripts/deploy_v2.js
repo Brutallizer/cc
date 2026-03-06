@@ -23,9 +23,9 @@ async function main() {
         return;
     }
 
-    const C = await hre.ethers.getContractFactory("CertiChain");
+    const C = await hre.ethers.getContractFactory("CredBlock");
 
-    console.log("Deploying CertiChain V2...");
+    console.log("Deploying CredBlock V2...");
     const c = await C.deploy({
         gasLimit: gasLimit,
         maxFeePerGas: maxFeePerGas,

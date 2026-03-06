@@ -1,8 +1,8 @@
 /**
- * Script Deployment CertiChain
+ * Script Deployment CredBlock
  * 
  * FUNGSI:
- * Men-deploy smart contract CertiChain ke jaringan blockchain.
+ * Men-deploy smart contract CredBlock ke jaringan blockchain.
  * Bisa digunakan untuk jaringan lokal (Hardhat node) maupun testnet (Polygon Amoy).
  * 
  * CARA PAKAI:
@@ -14,7 +14,7 @@ const hre = require("hardhat");
 
 async function main() {
     console.log("==============================================");
-    console.log("  CertiChain - Deployment Script");
+    console.log("  CredBlock - Deployment Script");
     console.log("==============================================\n");
 
     // Ambil akun deployer (akun pertama dari konfigurasi network)
@@ -25,20 +25,20 @@ async function main() {
     const balance = await hre.ethers.provider.getBalance(deployer.address);
     console.log("Deployer balance:", hre.ethers.formatEther(balance), "ETH\n");
 
-    // Deploy contract CertiChain
-    console.log("Deploying CertiChain contract...");
-    const CertiChain = await hre.ethers.getContractFactory("CertiChain");
-    const certichain = await CertiChain.deploy();
+    // Deploy contract CredBlock
+    console.log("Deploying CredBlock contract...");
+    const CredBlock = await hre.ethers.getContractFactory("CredBlock");
+    const credblock = await CredBlock.deploy();
 
     // Tunggu sampai contract ter-deploy dan terkonfirmasi
-    await certichain.waitForDeployment();
+    await credblock.waitForDeployment();
 
     // Ambil alamat contract yang sudah ter-deploy
-    const contractAddress = await certichain.getAddress();
+    const contractAddress = await credblock.getAddress();
 
-    // Registrasi otomatis dompet deployer sebagai institusi kampus
-    console.log("Mendaftarkan deployer sebagai institusi 'Universitas Insan Cita Indonesia (UICI)'...");
-    const regTx = await certichain.registerInstitution(deployer.address, "Universitas Insan Cita Indonesia (UICI)");
+    // Registrasi otomatis dompet deployer sebagai institusi kampus Kementerian
+    console.log("Mendaftarkan deployer sebagai institusi 'Kementerian (SuperAdmin)'...");
+    const regTx = await credblock.registerInstitutionDirectly(deployer.address, "Kementerian Pusat");
     await regTx.wait();
 
     console.log("\n==============================================");
