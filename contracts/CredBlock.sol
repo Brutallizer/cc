@@ -165,8 +165,11 @@ contract CredBlock {
 
     /**
      * @notice Menyimpan BANYAK (Bulk) hash ijazah sekaligus.
+     * Diberi batasan maksimal 500 hash per transaksi untuk menghindari Out-of-Gas Attack.
      */
     function storeMultipleHashes(bytes32[] calldata _hashes) public onlyApprovedInstitution {
+        require(_hashes.length <= 500, "CredBlock: Maksimal 500 hash per transaksi");
+        
         for (uint256 i = 0; i < _hashes.length; i++) {
             bytes32 currentHash = _hashes[i];
             

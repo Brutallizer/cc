@@ -20,7 +20,7 @@
 // KONFIGURASI
 // ============================================================
 
-const CONTRACT_ADDRESS = "0xcFDC83D3BbE8db338c99443B25375d5caB0eba27"; // CredBlock - Polygon Amoy
+const CONTRACT_ADDRESS = "0x1d05E0d9B7b691cc45bE37185ADB117Dc671B8a3"; // CredBlock - Polygon Amoy
 
 /**
  * ABI minimal — hanya fungsi yang dibutuhkan untuk verifikasi.
