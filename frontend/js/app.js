@@ -224,37 +224,6 @@ async function connectBlockchain(method = 'auto') {
             return;
         }
 
-    } else if (method === 'google' || (method === 'auto' && localStorage.getItem("credblock_admin_wallet"))) {
-        // --- JALUR GOOGLE (SIMULASI SMART WALLET) ---
-        let savedPrivateKey = localStorage.getItem("credblock_admin_wallet");
-
-        if (!savedPrivateKey) {
-            if (method === 'google') {
-                // [SECURITY FIX] Setiap user Google mendapat wallet BARU yang UNIK
-                // Private key di-generate secara acak di browser (Principle of Least Privilege)
-                // Wallet baru ini default role = NotRegistered (bukan admin)
-                const randomWallet = ethers.Wallet.createRandom();
-                savedPrivateKey = randomWallet.privateKey;
-                localStorage.setItem("credblock_admin_wallet", savedPrivateKey);
-                localStorage.setItem('credblock_login_method', 'google');
-            } else {
-                document.getElementById("loginOverlay").classList.remove("hidden");
-                return;
-            }
-        }
-
-        try {
-            updateTxStatus("pending", "Menghubungkan ke jaringan Polygon Amoy...");
-            // [SECURITY FIX] Gunakan RPC failover
-            provider = await getWorkingProvider();
-            signer = new ethers.Wallet(savedPrivateKey, provider);
-            userAddress = await signer.getAddress();
-            localStorage.setItem('credblock_login_method', 'google');
-        } catch (error) {
-            console.error("❌ Gagal load Smart Wallet:", error);
-            document.getElementById("loginOverlay").classList.remove("hidden");
-            throw new Error("Gagal load sesi login Google DApp.");
-        }
     } else {
         // Belum login apapun → tampilkan overlay login
         document.getElementById("loginOverlay").classList.remove("hidden");
@@ -1105,25 +1074,7 @@ function showToastSuccess(pesan) {
  */
 document.addEventListener("DOMContentLoaded", () => {
     // Setup Listeners untuk tombol login
-    const btnGoogleLogin = document.getElementById("btnGoogleLogin");
     const btnMetaMaskLogin = document.getElementById("btnMetaMaskLogin");
-
-    if (btnGoogleLogin) {
-        btnGoogleLogin.addEventListener("click", () => {
-            // Animasi loading
-            const loginText = document.getElementById("loginText");
-            const loginSpinner = document.getElementById("loginSpinner");
-            if (loginText) loginText.textContent = "Authenticating...";
-            if (loginSpinner) loginSpinner.classList.remove("hidden");
-            btnGoogleLogin.disabled = true;
-
-            // Hapus session lama jika user klik tombol secara manual
-            localStorage.removeItem("credblock_admin_wallet");
-            setTimeout(() => {
-                connectBlockchain('google');
-            }, 1200);
-        });
-    }
 
     if (btnMetaMaskLogin) {
         btnMetaMaskLogin.addEventListener("click", () => {
