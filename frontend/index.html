@@ -72,14 +72,7 @@
             </div>
 
             <!-- Navigation Links -->
-            <div class="flex items-center gap-6">
-                <a href="index.html"
-                    class="text-sm font-semibold text-primary-500 border-b-2 border-primary-500 pb-1">Dashboard
-                    Admin</a>
-                <a href="verify.html"
-                    class="text-sm font-medium text-gray-500 hover:text-primary-500 transition-colors">Portal
-                    Verifikasi</a>
-            </div>
+            <!-- Navigasi disembunyikan di Landing Page atas permintaan User -->
 
             <!-- Status Koneksi & Profile Admin -->
             <div class="flex items-center gap-4">
@@ -157,547 +150,204 @@
 
     <!-- ============================================================ -->
     <!-- MAIN CONTENT -->
-    <!-- ============================================================ -->
-    <main class="max-w-6xl mx-auto px-6 py-8">
-
-        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Dashboard Admin Kampus</h2>
-                <p class="text-gray-500">Amankan data kelulusan mahasiswa secara permanen ke blockchain global.</p>
+    <main class="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div class="flex flex-col items-center text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-xs font-semibold mb-6 border border-primary-100">
+                <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+                Sistem Verifikasi Ijazah Blockchain Amoy
             </div>
-        </div>
+            
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6 max-w-4xl">
+                Amankan Masa Depan dengan <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-blue-400">Bukti Digital Abadi</span>
+            </h1>
+            
+            <p class="text-lg text-gray-500 mb-12 max-w-2xl leading-relaxed">
+                CredBlock menempatkan data kelulusan akademik secara permanen di atas jaringan blockchain Polygon, mengeliminasi risiko pemalsuan ijazah dan mempercepat proses verifikasi oleh HRD/Perusahaan.
+            </p>
 
-        <!-- BANNER: Wallet Belum Terdaftar (hidden by default, ditampilkan via JS) -->
-        <div id="bannerNotRegistered"
-            class="hidden mb-6 bg-amber-50 border border-amber-300 rounded-xl px-6 py-4 flex items-center gap-4">
-            <div
-                class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                <!-- Card Verifikasi -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-primary-300 transition-all text-left flex flex-col group relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 shrink-0 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Portal Verifikasi Publik</h3>
+                    <p class="text-sm text-gray-500 mb-8 flex-1">
+                        Bagi HRD, Pewawancara, atau Masyarakat Umum yang ingin memvalidasi keaslian ijazah secara instan (Gasless/Gratis) tanpa perlu login.
+                    </p>
+                    <a href="verify.html" class="w-full inline-flex justify-center items-center gap-2 px-6 py-3.5 bg-gray-900 hover:bg-black text-white text-sm font-semibold rounded-xl shadow-lg shadow-gray-200 transition-all ring-1 ring-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Cek Keaslian Sekarang
+                    </a>
+                </div>
+
+                <!-- Card Admin -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-300 transition-all text-left flex flex-col group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 transition-all group-hover:scale-150"></div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 shrink-0 z-10 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 z-10">Dashboard Institusi Kampus</h3>
+                    <p class="text-sm text-gray-500 mb-8 flex-1 z-10">
+                        Bagi Admin Kampus (Perguruan Tinggi Publik) yang memiliki otoritas untuk men-deploy data kelulusan ke blockchain Polygon.
+                    </p>
+                    <a href="admin.html" class="w-full inline-flex justify-center items-center gap-2 px-6 py-3.5 bg-amber-100/50 hover:bg-amber-100 text-amber-900 text-sm font-semibold rounded-xl transition-all border border-amber-200 group-hover:border-amber-300 z-10 relative focus:outline-none focus:ring-4 focus:ring-amber-200">
+                        Login Web3 Dashboard
+                    </a>
+                </div>
             </div>
-            <div>
-                <h4 class="text-sm font-bold text-amber-800">Wallet Belum Terdaftar sebagai Institusi</h4>
-                <p class="text-xs text-amber-700 mt-0.5">Alamat dompet Anda belum didaftarkan oleh Super Admin sebagai
-                    kampus. Anda tidak dapat menyimpan hash ijazah sampai wallet Anda terdaftar.</p>
+            
+            <div class="mt-16 flex flex-wrap justify-center gap-3 items-center opacity-80 hover:opacity-100 transition-opacity">
+                <!-- Tech Stack Tags -->
+                <span class="px-3 py-1.5 rounded-full bg-gray-100 text-[10px] font-bold text-gray-700 font-mono tracking-wider border border-gray-200 shadow-sm">SOLIDITY</span>
+                <span class="px-3 py-1.5 rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-700 font-mono tracking-wider border border-indigo-100 shadow-sm">POLYGON AMOY</span>
+                <span class="px-3 py-1.5 rounded-full bg-blue-50 text-[10px] font-bold text-blue-700 font-mono tracking-wider border border-blue-100 shadow-sm">ETHERS.JS</span>
+                <span class="px-3 py-1.5 rounded-full bg-yellow-50 text-[10px] font-bold text-yellow-700 font-mono tracking-wider border border-yellow-100 shadow-sm">ES6 JAVASCRIPT</span>
+                <span class="px-3 py-1.5 rounded-full bg-sky-50 text-[10px] font-bold text-sky-700 font-mono tracking-wider border border-sky-100 shadow-sm">TAILWINDCSS</span>
             </div>
         </div>
 
         <!-- ============================================================ -->
-        <!-- BENTO GRID ANALYTICS -->
+        <!-- KEUNGGULAN & AKADEMIS (SPOILER) -->
         <!-- ============================================================ -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Card 1: Total Data Tersimpan -->
-            <div
-                class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div
-                    class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full z-0 group-hover:scale-150 transition-transform duration-500">
-                </div>
-                <div class="relative z-10 flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Total Lulusan Tersimpan</p>
-                        <h3 id="statTotalData" class="text-3xl font-bold text-gray-900 tracking-tight">0</h3>
+        <div class="mt-32 space-y-32 text-left w-full">
+            
+            <!-- 1. Konsep Akademis (Problem & Solution) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        Latar Belakang Akademis
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">Mencegah Pemalsuan Dokumen Menggunakan <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-blue-500">Kriptografi</span></h2>
+                    <p class="text-gray-600 leading-relaxed text-sm md:text-base">
+                        Praktik pemalsuan dokumen akademik merugikan integritas institusi pendidikan dan mengacaukan proses rekrutmen di industri. Basis data terpusat (Web2) rentan dimanipulasi oleh <i>insider</i> (orang dalam) dan memiliki titik kegagalan tunggal (<i>Single Point of Failure</i>).
+                    </p>
+                    <p class="text-gray-600 leading-relaxed text-sm md:text-base">
+                        Sebagai solusi revolusioner, <strong>CredBlock</strong> memisahkan data privat lulusan dengan bukti keabsahannya. Menggunakan Algoritma <code class="bg-gray-100 text-pink-600 px-1 py-0.5 rounded text-sm font-mono tracking-tight">SHA-256</code>, data dirangkum menjadi nilai Hash yang mustahil dikembalikan ke teks asli. Hash ini kemudian dikunci secara permanen di dalam <em>Smart Contract</em> jaringan Polygon.
+                    </p>
+                </div>
+                <!-- Animasi Hash Visual -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-primary-500 to-blue-300 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden min-h-[300px] flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-6 md:p-8">
+                        <div class="text-center font-mono w-full">
+                            <div class="text-[11px] text-gray-400 font-sans font-bold mb-2 uppercase tracking-widest">Data Ijazah (Input)</div>
+                            <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-200 text-gray-700 text-xs md:text-sm flex justify-center items-center gap-2 relative overflow-hidden group-hover:border-blue-200 transition-colors">
+                                <span class="bg-blue-100/50 absolute inset-0 w-full h-full transform -translate-x-full animate-[shimmer_2s_infinite]"></span>
+                                <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                <span class="font-semibold">{"nama":"Budi S.Kom", "nim":"2411"}</span>
+                            </div>
+                            
+                            <!-- Arrow Down -->
+                            <div class="my-5 text-blue-500 flex justify-center">
+                                <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                            </div>
+                            
+                            <div class="text-[11px] text-gray-400 font-sans font-bold mb-2 uppercase tracking-widest">Kalkulasi SHA-256 On-Chain</div>
+                            <div class="bg-gray-900 mx-auto text-green-400 px-4 py-4 rounded-xl shadow-inner text-[10px] md:text-xs break-all max-w-full font-semibold relative overflow-hidden group-hover:ring-2 ring-green-500/50 transition-all">
+                                0xdf84a29c1b3f9e2b1029c...82bc5d1ea20394a
+                            </div>
+                            
+                            <div class="mt-5 flex items-center justify-center gap-2 text-[11px] font-sans text-gray-500 font-medium bg-gray-100/50 py-1.5 px-3 rounded-full mx-auto w-max border border-gray-200">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                Tercatat Abadi di Node Polygon
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p class="text-xs text-green-600 mt-4 font-medium flex items-center gap-1 relative z-10">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                    Data on-chain
-                </p>
             </div>
 
-            <!-- Card 2: Estimasi Gas Hemat -->
-            <div
-                class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div
-                    class="absolute -right-4 -top-4 w-24 h-24 bg-green-50 rounded-full z-0 group-hover:scale-150 transition-transform duration-500">
-                </div>
-                <div class="relative z-10 flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Estimasi Gas Dihemat</p>
-                        <h3 id="statGasSaved" class="text-3xl font-bold text-gray-900 tracking-tight">0 <span
-                                class="text-lg font-medium text-gray-500">POL</span></h3>
+            <!-- 2. Pillars of Blockchain -->
+            <div class="text-center pt-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Pilar Keamanan Blockchain</h2>
+                <p class="text-gray-500 mb-12 max-w-2xl mx-auto">Tiga fondasi utama mengapa Ethereal Virtual Machine (EVM) adalah platform sempurna untuk menumpas pemalsuan sertifikat secara global.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <!-- Fitur 1 -->
+                    <div class="bg-white p-8 rounded-2xl border border-gray-100 border-b-4 border-b-blue-200 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">Immutability (Kekekalan Data)</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Setelah data di-deploy ke dalam block yang valid, mustahil untuk diubah, di-hack, atau dihapus oleh pihak mana pun, mengunci kebenaran validitas akademis.</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    <!-- Fitur 2 -->
+                    <div class="bg-white p-8 rounded-2xl border border-gray-100 border-b-4 border-b-purple-200 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">Transparansi Penyelidikan</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Sistem pengecekan tidak berdiri di belakang perizinan tertutup. Pihak HRD merdeka memverifikasi keaslian dokumen secara independen tanpa API server spesifik.</p>
+                    </div>
+                    <!-- Fitur 3 -->
+                    <div class="bg-white p-8 rounded-2xl border border-gray-100 border-b-4 border-b-green-200 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">Keamanan Privasi 100%</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Sistem Blockchain hanya menyimpan <i>sidik jari digital (Hash)</i>. Nama dan transkrip mahasiswa tetap terjaga privasinya di luar server (Off-Chain), anti-doxing.</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-4 relative z-10">Berkat fitur <span class="font-semibold">Bulk
-                        Import</span></p>
             </div>
 
-            <!-- Card 3: Network Status -->
-            <div
-                class="bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl p-6 border border-primary-700 shadow-sm relative overflow-hidden group">
-                <!-- Background Pattern -->
-                <svg class="absolute inset-0 w-full h-full opacity-10" fill="currentColor" viewBox="0 0 100 100">
-                    <path
-                        d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" />
-                </svg>
-                <div class="relative z-10 flex flex-col h-full justify-between">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <p class="text-sm font-medium text-primary-200 mb-1">Network Status</p>
-                            <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                                <span
-                                    class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse border border-green-200"></span>
-                                Polygon Amoy
-                            </h3>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-xl bg-white/10 text-white backdrop-blur-sm flex items-center justify-center border border-white/20">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
-                        </div>
+            <!-- 3. Flow Sistem Visual -->
+            <div class="bg-slate-900 rounded-[2rem] p-8 md:p-14 relative overflow-hidden shadow-2xl pb-16">
+                <!-- Background dekorasi -->
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
+                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-600 rounded-full blur-[100px] animate-pulse"></div>
+                    <div class="absolute -bottom-24 -left-20 w-80 h-80 bg-blue-500 rounded-full blur-[80px] animate-pulse" style="animation-delay: 1.5s;"></div>
+                </div>
+                
+                <div class="relative z-10 text-center mb-16">
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-4">Arsitektur Eksekusi Terdesentralisasi</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">Mekanisme visual perjalanan data dari input entitas akademik institusi kampus hingga hasil akhir berupa sertifikasi kriptografi.</p>
+                </div>
+
+                <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-center text-white mt-10">
+                   <!-- Connector Line (Desktop Only) -->
+                   <div class="hidden md:block absolute top-[40px] left-[16.66%] w-[66.66%] h-1 bg-gradient-to-r from-slate-700 via-primary-500 to-slate-700 z-0 rounded-full opacity-50"></div>
+                    
+                    <!-- Step 1 -->
+                    <div class="relative z-10 group mt-4">
+                        <div class="w-16 h-16 md:w-20 md:h-20 mx-auto bg-slate-800 border-4 border-slate-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform group-hover:border-blue-400 shadow-lg text-gray-300 group-hover:text-blue-200">1</div>
+                        <h4 class="font-bold text-xl mb-3 text-white">Entry & Hashing</h4>
+                        <p class="text-sm text-slate-400 px-2 leading-relaxed">Kampus memasukkan rekam data kelulusan. Node lokal kami langsung mengkomputasi algoritma kompresi SHA-256 tanpa mencatatkan historinya.</p>
                     </div>
-                    <div class="flex items-center gap-4 text-xs font-mono text-primary-200">
-                        <div class="flex flex-col">
-                            <span class="text-primary-300">Ping</span>
-                            <span class="text-white">~45ms</span>
-                        </div>
-                        <div class="w-px h-6 bg-white/20"></div>
-                        <div class="flex flex-col">
-                            <span class="text-primary-300">Block Time</span>
-                            <span class="text-white">~2.1s</span>
-                        </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="relative z-10 group mt-4">
+                        <div class="w-16 h-16 md:w-20 md:h-20 mx-auto bg-primary-600 border-4 border-primary-300 rounded-full flex items-center justify-center text-2xl font-bold mb-6 shadow-[0_0_40px_rgba(30,64,175,0.9)] group-hover:scale-110 transition-transform text-white">2</div>
+                        <h4 class="font-bold text-xl mb-3 text-white">Deployment Contract</h4>
+                        <p class="text-sm text-slate-300 px-2 leading-relaxed font-medium">Melalui dompet web3 (MetaMask), string Hash tersebut ditandatangani secara digital dan dipancarkan ke atas <i>Mainnet Ledger</i> Amoy.</p>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="relative z-10 group mt-4">
+                        <div class="w-16 h-16 md:w-20 md:h-20 mx-auto bg-slate-800 border-4 border-slate-600 rounded-full flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform group-hover:border-accent-400 shadow-lg text-gray-300 group-hover:text-accent-300">3</div>
+                        <h4 class="font-bold text-xl mb-3 text-white">Instant Validation</h4>
+                        <p class="text-sm text-slate-400 px-2 leading-relaxed">Rekruter global memverifikasi data pelamar secara independen & tanpa latensi melalui portal publik CredBlock yang read-only.</p>
                     </div>
                 </div>
             </div>
+            
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <!-- ============================================================ -->
-            <!-- DASHBOARD KEMENTERIAN (SUPER ADMIN) -->
-            <!-- ============================================================ -->
-            <div id="dashboardKementerian" class="hidden lg:col-span-3 space-y-8">
-                <!-- Panel Statistik Kementerian -->
-                <div
-                    class="bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold text-indigo-900">Portal Kementerian Pendidikan</h3>
-                        <p class="text-indigo-700 text-sm mt-1">Kelola permohonan pembukaan akses jaringan blockchain
-                            untuk institusi perguruan tinggi baru.</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <div
-                            class="bg-white rounded-lg shadow-sm border border-indigo-50 p-4 text-center min-w-[120px]">
-                            <p class="text-xs text-gray-500 font-medium mb-1">Menunggu Review</p>
-                            <p id="statPending" class="text-2xl font-bold text-yellow-600">0</p>
-                        </div>
-                        <div
-                            class="bg-white rounded-lg shadow-sm border border-indigo-50 p-4 text-center min-w-[120px]">
-                            <p class="text-xs text-gray-500 font-medium mb-1">Kampus Terhubung</p>
-                            <p id="statApproved" class="text-2xl font-bold text-green-600">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tabel Approval -->
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                        <h3 class="font-semibold text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                            </svg>
-                            Daftar Pengajuan Perguruan Tinggi
-                        </h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left align-middle border-collapse">
-                            <thead class="text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
-                                <tr>
-                                    <th class="px-6 py-4 font-semibold w-1/3">Detail Kampus</th>
-                                    <th class="px-6 py-4 font-semibold">Wallet Pengaju</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Status On-Chain</th>
-                                    <th class="px-6 py-4 font-semibold text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="approvalTableBody" class="divide-y divide-gray-100">
-                                <!-- Diisi javascript -->
-                                <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                        <div class="flex justify-center mb-3">
-                                            <div
-                                                class="w-6 h-6 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin">
-                                            </div>
-                                        </div>
-                                        Memuat data pendaftar...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ============================================================ -->
-            <!-- DASHBOARD INSTITUSI (NORMAL ADMIN - KOLOM 2/3 KIRI, 1/3 KANAN) -->
-            <!-- ============================================================ -->
-            <div id="dashboardInstitusi" class="contents hidden">
-
-                <!-- FORM INPUT & BULK IMPORT (Kolom Kiri, 2/3 lebar) -->
-                <div class="lg:col-span-2 space-y-8">
-
-                    <!-- PANEL: BULK IMPORT CSV -->
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50">
-                        </div>
-
-                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-900 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                </svg>
-                                Bulk Import (Upload CSV)
-                            </h3>
-                            <span class="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-1 rounded">HEMAT
-                                GAS</span>
-                        </div>
-
-                        <div class="px-6 py-5">
-                            <p class="text-sm text-gray-500 mb-4">Upload file CSV berisi data banyak mahasiswa untuk
-                                di-hash
-                                dan disimpan sekaligus dalam 1 transaksi.</p>
-
-                            <form id="csvForm" class="flex flex-col gap-4">
-                                <div class="flex items-center justify-center w-full">
-                                    <label for="csvFile"
-                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg class="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                            </svg>
-                                            <p class="mb-1 text-sm text-gray-500"><span class="font-semibold">Klik untuk
-                                                    upload</span> atau drag and drop</p>
-                                            <p class="text-xs text-gray-400">Format: Nama,NIM,Jurusan,IPK,TanggalLahir
-                                                (.csv)</p>
-                                        </div>
-                                        <input id="csvFile" type="file" accept=".csv" class="hidden" required />
-                                    </label>
-                                </div>
-
-                                <div id="csvFileInfo"
-                                    class="hidden flex items-center justify-between bg-primary-50 border border-primary-100 rounded-lg px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        <div>
-                                            <p id="csvFileName" class="text-xs font-semibold text-gray-700">
-                                                data_mahasiswa.csv</p>
-                                            <p id="csvRowCount" class="text-xs text-gray-500">Menemukan 0 baris data</p>
-                                        </div>
-                                    </div>
-                                    <button type="button" id="btnProcessCsv"
-                                        class="px-4 py-2 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700 transition-colors">
-                                        Proses & Simpan
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- PANEL: FORM INPUT MANUAL -->
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                        <!-- Form Header -->
-                        <div class="px-6 py-4 border-b border-gray-100">
-                            <h3 class="font-semibold text-gray-900 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Data Ijazah Mahasiswa
-                            </h3>
-                        </div>
-
-                        <!-- Form Body -->
-                        <form id="hashForm" class="px-6 py-5 space-y-5">
-                            <!-- Nama Lengkap -->
-                            <div>
-                                <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">Nama
-                                    Lengkap</label>
-                                <input type="text" id="nama" placeholder="Contoh: Ahmad Fauzan Hakim"
-                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                    required>
-                            </div>
-
-                            <!-- NIM & Jurusan (2 kolom) -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label for="nim" class="block text-sm font-medium text-gray-700 mb-1.5">NIM (Nomor
-                                        Induk
-                                        Mahasiswa)</label>
-                                    <input type="text" id="nim" placeholder="Contoh: 2024110001"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                        required>
-                                </div>
-                                <div>
-                                    <label for="jurusan" class="block text-sm font-medium text-gray-700 mb-1.5">Program
-                                        Studi</label>
-                                    <input type="text" id="jurusan" placeholder="Contoh: Sistem Informasi"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                        required>
-                                </div>
-                            </div>
-
-                            <!-- IPK & Tanggal Lahir (2 kolom) -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1.5">IPK</label>
-                                    <input type="text" id="ipk" placeholder="Contoh: 3.85"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                        required>
-                                </div>
-                                <div>
-                                    <label for="tanggalLahir"
-                                        class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal
-                                        Lahir</label>
-                                    <input type="date" id="tanggalLahir"
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                                        required>
-                                </div>
-                            </div>
-
-                            <!-- Preview Hash -->
-                            <div id="hashPreview" class="hidden">
-                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Preview Hash
-                                    SHA-256</label>
-                                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-                                    <code id="hashValue" class="text-xs text-gray-600 break-all font-mono"></code>
-                                </div>
-                            </div>
-
-                            <!-- Tombol Aksi -->
-                            <div class="flex gap-3 pt-2">
-                                <button type="button" id="btnPreview" onclick="previewHash()"
-                                    class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                                    Preview Hash
-                                </button>
-                                <button type="submit" id="btnSubmit"
-                                    class="px-5 py-2.5 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                    Simpan ke Blockchain
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- ============================================================ -->
-                <!-- PANEL INFO (Kolom Kanan, 1/3 lebar) -->
-                <!-- ============================================================ -->
-                <div class="space-y-6">
-
-                    <!-- KARTU PROFIL INSTITUSI (dari JSON off-chain, diisi via JS) -->
-                    <div id="institutionProfileCard"
-                        class="hidden bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div class="bg-gradient-to-r from-primary-800 to-primary-600 px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/30">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white leading-tight">Profil Institusi</h3>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                                        <span class="text-[10px] text-primary-100 font-medium">Terverifikasi
-                                            On-Chain</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="px-6 py-5 space-y-3">
-                            <div>
-                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Nama
-                                    Kampus</p>
-                                <p id="profileCampusName" class="text-sm font-bold text-gray-900">-</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
-                                    Alamat
-                                </p>
-                                <p id="profileCampusAddr" class="text-xs text-gray-600 leading-relaxed">-</p>
-                            </div>
-                            <div class="flex gap-4">
-                                <div class="flex-1">
-                                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
-                                        Akreditasi</p>
-                                    <span id="profileCampusAccred"
-                                        class="inline-block text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">-</span>
-                                </div>
-                            </div>
-                            <div class="pt-2 border-t border-gray-100 space-y-2">
-                                <div class="flex items-center gap-2 text-xs">
-                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                                    </svg>
-                                    <a id="profileCampusWeb" href="#" target="_blank"
-                                        class="text-primary-500 hover:underline truncate">-</a>
-                                </div>
-                                <div class="flex items-center gap-2 text-xs">
-                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    <span id="profileCampusEmail" class="text-gray-600 truncate">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Uploads / Log Aktivitas -->
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[500px]">
-                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-900 text-sm flex items-center gap-2">
-                                <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Riwayat Hash Terakhir
-                            </h3>
-                            <button id="btnClearHistory"
-                                class="text-[10px] text-gray-400 hover:text-red-500 transition-colors cursor-pointer focus:outline-none">Hapus</button>
-                        </div>
-
-                        <!-- Container List History yang bisa di-scroll -->
-                        <div id="historyListContainer" class="flex-1 overflow-y-auto p-2 space-y-1">
-                            <!-- State Kosong -->
-                            <div id="emptyHistoryState"
-                                class="h-full flex flex-col items-center justify-center p-6 text-center">
-                                <div
-                                    class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 text-gray-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <p class="text-sm font-medium text-gray-900 mb-1">Daftar Kosong</p>
-                                <p class="text-xs text-gray-500">Hash ijazah yang Anda simpan di sesi ini akan muncul di
-                                    sini.</p>
-                            </div>
-
-                            <!-- Item List akan di-inject via JS -->
-                        </div>
-                    </div>
-
-                    <!-- Cara Kerja -->
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                        <div class="px-6 py-4 border-b border-gray-100">
-                            <h3 class="font-semibold text-gray-900 text-sm">Cara Kerja</h3>
-                        </div>
-                        <div class="px-6 py-5 space-y-4">
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                    1</div>
-                                <p class="text-xs text-gray-600 leading-relaxed">Admin mengisi data mahasiswa (Nama,
-                                    NIM,
-                                    Jurusan, IPK, Tanggal Lahir).</p>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                    2</div>
-                                <p class="text-xs text-gray-600 leading-relaxed">Sistem menghasilkan <strong>hash
-                                        SHA-256</strong> dari data tersebut.</p>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex-shrink-0 w-6 h-6 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center text-xs font-bold">
-                                    3</div>
-                                <p class="text-xs text-gray-600 leading-relaxed">Hanya <strong>hash</strong> yang
-                                    disimpan
-                                    di blockchain (hemat gas fee).</p>
-                            </div>
-                            <div class="flex gap-3">
-                                <div
-                                    class="flex-shrink-0 w-6 h-6 bg-accent-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                    ✓</div>
-                                <p class="text-xs text-gray-600 leading-relaxed">HRD dapat memverifikasi keaslian
-                                    melalui <a href="verify.html" class="text-primary-500 underline">Portal
-                                        Verifikasi</a>.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Info Jaringan -->
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-                        <div class="px-6 py-4 border-b border-gray-100">
-                            <h3 class="font-semibold text-gray-900 text-sm">Info Jaringan</h3>
-                        </div>
-                        <div class="px-6 py-5 space-y-3">
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-500">Network</span>
-                                <span id="networkName" class="font-medium text-gray-700">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-500">Contract</span>
-                                <span id="contractAddr"
-                                    class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-500">Admin</span>
-                                <span id="adminAddr"
-                                    class="font-mono text-gray-700 truncate ml-2 max-w-[140px]">-</span>
-                            </div>
-                        </div>
-                    </div>
-                </div> <!-- Akhir sidebar kolom Kanan -->
-
-            </div> <!-- Akhiran <div id="dashboardInstitusi" class="contents"> -->
-
-        </div> <!-- Akhiran w-full Grid -->
     </main>
 
     <!-- ============================================================ -->
     <!-- FOOTER -->
     <!-- ============================================================ -->
-    <footer class="border-t border-gray-200 mt-12">
-        <div class="max-w-6xl mx-auto px-6 py-6 text-center">
-            <p class="text-xs text-gray-400">CredBlock &copy; 2026 — Tugas Akhir Sistem Informasi. Blockchain-based
-                Degree Verification System.</p>
+    <footer class="border-t border-gray-200 mt-12 bg-white">
+        <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col items-center">
+            <h4 class="font-bold text-gray-900 mb-2">CredBlock</h4>
+            <p class="text-xs text-center text-gray-500 max-w-md">
+                Tugas Akhir Sistem Informasi. Sistem keamanan siber anti-manipulasi data menggunakan buku besar publik (Public Ledger) Ethereal VM.
+            </p>
+            <p class="text-xs text-gray-400 mt-6">&copy; 2026 Belajar Web3.</p>
         </div>
     </footer>
-
-    <!-- Ethers.js v6 via CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
-    <!-- App Logic -->
-    <script src="js/app.js"></script>
 </body>
 
 </html>
