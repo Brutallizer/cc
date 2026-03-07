@@ -1,5 +1,5 @@
 const CONTRACT_ADDRESS = "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27"; // CredBlock V3 (UUPS Proxy) - Polygon Amoy
-const BACKEND_URL = "http://localhost:3001"; // Backend API Server
+const BACKEND_URL = ""; // Vercel Serverless (Relative Path)
 const CONTRACT_ABI = [
     "function applyForRegistration(string memory _name)",
     "function institutions(address) view returns (string name, uint8 status)"

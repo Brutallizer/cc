@@ -36,8 +36,8 @@ const CONTRACT_ABI = [
 
 let provider;   // Koneksi ke blockchain (read-only)
 let contract;   // Instance smart contract
-let institutionsDB = {}; // Database profil kampus (dari Backend API / SQLite)
-const BACKEND_URL = "http://localhost:3001"; // Backend API Server
+let institutionsDB = {}; // Database profil kampus (dari Backend API / Supabase)
+const BACKEND_URL = ""; // Vercel Serverless (Relative Path)
 
 // [SECURITY] RPC Failover URLs
 const RPC_URLS = [

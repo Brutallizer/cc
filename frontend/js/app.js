@@ -57,7 +57,7 @@ let signer;     // Object yang merepresentasikan akun pengguna (admin)
 let contract;   // Instance smart contract yang bisa dipanggil dari JS
 let institutionsDB = {}; // Database profil kampus (dari Backend API / SQLite)
 let isConnecting = false; // Guard agar koneksi tidak dipanggil berulang kali
-const BACKEND_URL = "http://localhost:3001"; // Backend API Server
+const BACKEND_URL = ""; // Vercel Serverless (Relative Path)
 
 // [SECURITY] RPC Failover URLs
 const RPC_URLS = [
