@@ -408,15 +408,29 @@ async function loadKementerianDashboard() {
             let badgeHtml = '';
             let isActionable = false;
 
+            let buttonsHtml = '';
+
             if (statusInt === 1) { // Pending
                 badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-yellow-700 bg-yellow-100 rounded-full">Antrean (Pending)</span>';
-                isActionable = true;
                 pendingCount++;
+                buttonsHtml = `
+                    <button data-action="approve" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Approve</button>
+                    <button data-action="reject" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Tolak</button>
+                `;
             } else if (statusInt === 2) { // Approved
                 badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-green-700 bg-green-100 rounded-full">Terdaftar (Approved)</span>';
                 approvedCount++;
+                buttonsHtml = `
+                    <button data-action="deactivate" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Cabut Izin</button>
+                `;
             } else if (statusInt === 3) { // Rejected
                 badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-700 bg-red-100 rounded-full">Ditolak</span>';
+                buttonsHtml = `<span class="text-[11px] text-gray-400 font-medium">Ditolak</span>`;
+            } else if (statusInt === 4) { // Deactivated
+                badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-700 bg-gray-200 rounded-full">Dinonaktifkan</span>';
+                buttonsHtml = `
+                    <button data-action="reactivate" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Aktifkan Ulang</button>
+                `;
             }
 
             // [V3] Gabungkan metadata dari Backend API atau institutionsDB statis
@@ -443,25 +457,22 @@ async function loadKementerianDashboard() {
                     ${badgeHtml}
                 </td>
                 <td class="px-6 py-4 text-right">
-                    ${isActionable ? `
-                        <button data-action="approve" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Approve</button>
-                        <button data-action="reject" data-wallet="${escapeHtml(wallet)}" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded shadow-sm transition active:scale-95 ml-1">Tolak</button>
-                    ` : `
-                        <span class="text-[11px] text-gray-400 font-medium">Selesai</span>
-                    `}
+                    ${buttonsHtml}
                 </td>
             </tr>`;
         }
 
         tableBody.innerHTML = html;
 
-        // [SECURITY FIX] Event delegation untuk tombol Approve/Reject
+        // [SECURITY FIX] Event delegation untuk tombol Approve/Reject/Deactivate
         tableBody.addEventListener('click', function(e) {
             const btn = e.target.closest('[data-action]');
             if (!btn) return;
             const wallet = btn.dataset.wallet;
             if (btn.dataset.action === 'approve') actionApprove(wallet);
             if (btn.dataset.action === 'reject') actionReject(wallet);
+            if (btn.dataset.action === 'deactivate') actionDeactivate(wallet);
+            if (btn.dataset.action === 'reactivate') actionReactivate(wallet);
         });
 
         if (document.getElementById("statPending")) document.getElementById("statPending").textContent = pendingCount;
@@ -509,9 +520,76 @@ window.actionReject = async function (wallet) {
         await tx.wait();
 
         updateTxStatus('success', 'Aplikasi berhasil ditolak.');
+        // Update status di API
+        try {
+            await fetch(`${BACKEND_URL}/api/campus/${wallet}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'rejected' })
+            });
+        } catch (e) {
+            console.warn('Gagal sync status ke backend:', e);
+        }
         loadKementerianDashboard();
     } catch (e) {
         updateTxStatus('error', 'Gagal memproses penolakan.');
+    }
+};
+
+window.actionDeactivate = async function (wallet) {
+    const reason = prompt("Masukkan alasan pencabutan izin (contoh: Pelanggaran Kode Etik):");
+    if (reason === null) return; // cancel
+    if (reason.trim() === "") return alert("Alasan wajib diisi!");
+
+    try {
+        updateTxStatus('pending', 'Memproses pencabutan izin (Deactivate)...');
+        // Fitur V3: Memanggil deactivateInstitution dari smart contract
+        const tx = await contract.deactivateInstitution(wallet, reason);
+        updateTxStatus('pending', 'Menunggu konfirmasi blockchain...');
+        await tx.wait();
+
+        updateTxStatus('success', 'Izin institusi berhasil dicabut (Deactivated)!');
+        // Update status di API
+        try {
+            await fetch(`${BACKEND_URL}/api/campus/${wallet}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'deactivated' })
+            });
+        } catch (e) {
+            console.warn('Gagal sync status ke backend:', e);
+        }
+        loadKementerianDashboard();
+    } catch (e) {
+        console.error("Deactivate error:", e);
+        updateTxStatus('error', 'Gagal mencabut izin kampus.');
+    }
+};
+
+window.actionReactivate = async function (wallet) {
+    if (!confirm('Yakin ingin memulihkan (Reactivate) izin institusi ini? Merek akan bisa mencetak hash lagi.')) return;
+    try {
+        updateTxStatus('pending', 'Memproses pemulihan izin (Reactivate)...');
+        // Fitur V3: Memanggil reactivateInstitution dari smart contract
+        const tx = await contract.reactivateInstitution(wallet);
+        updateTxStatus('pending', 'Menunggu konfirmasi blockchain...');
+        await tx.wait();
+
+        updateTxStatus('success', 'Izin institusi berhasil dipulihkan (Reactivated)!');
+        // Update status di API
+        try {
+            await fetch(`${BACKEND_URL}/api/campus/${wallet}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'approved' })
+            });
+        } catch (e) {
+            console.warn('Gagal sync status ke backend:', e);
+        }
+        loadKementerianDashboard();
+    } catch (e) {
+        console.error("Reactivate error:", e);
+        updateTxStatus('error', 'Gagal memulihkan izin kampus.');
     }
 };
 
