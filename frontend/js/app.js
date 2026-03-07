@@ -399,8 +399,18 @@ async function loadKementerianDashboard() {
             console.warn('Backend API tidak tersedia untuk dashboard, menggunakan data onchain saja.');
         }
 
+        // Array blacklist untuk menyembunyikan kampus testing cacat (Universitas Gaming & Universitass ss)
+        const hiddenWallets = [
+            "0xc1E58622E64c1F7c80529A887dbA52C063b2e7e4".toLowerCase(),
+            "0x5d1e8E0aDA442fccAdcBA41dc695bAa59A727cbA".toLowerCase()
+        ];
+
         for (let i = 0; i < applicants.length; i++) {
             const wallet = applicants[i];
+            
+            // Sembunyikan dari UI jika wallet masuk blacklist
+            if (hiddenWallets.includes(wallet.toLowerCase())) continue;
+
             const data = await contract.institutions(wallet);
             const statusInt = Number(data[1]);
             const onchainName = data[0];
