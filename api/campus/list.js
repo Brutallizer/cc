@@ -1,10 +1,10 @@
-import { supabase } from '../_lib/supabase.js';
+const { supabase } = require('../_lib/supabase.js');
 
 /**
  * REST API: GET /api/campus/list
  * Mengambil daftar seluruh kampus dari Supabase untuk ditampilkan di Dashboard Kementerian.
  */
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Aktifkan CORS secara manual untuk API Vercel
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
 // Baca dari Environment Variables Vercel
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -9,4 +9,6 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 // Gunakan Service Role Key untuk operasi admin (bypass RLS) yang diamankan di belakang Serverless API
-export const supabase = createClient(supabaseUrl || 'https://xyz.supabase.co', supabaseKey || 'dummy');
+const supabase = createClient(supabaseUrl || 'https://xyz.supabase.co', supabaseKey || 'dummy');
+
+module.exports = { supabase };
