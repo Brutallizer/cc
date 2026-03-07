@@ -1,0 +1,80 @@
+﻿≡ƒÜÇ MEMULAI SIMULASI END-TO-END CREDBLOCK V3...
+   Waktu: 2026-03-07T21:30:31.096Z
+   Network: Polygon Amoy Testnet
+   Contract: 0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27
+   Super Admin Wallet: 0xc6F375A0Fa07fF173696d2399755eBbD5e6186FD
+   Kampus Wallet (Baru): 0x70A1d89E019862Ad27B4d5A610e00A3708A8e0F6
+   Saldo Super Admin: 0.566997143694418118 MATIC
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 0: VERIFIKASI INFRASTRUKTUR                           Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  Γ£à PASS: Smart Contract aktif, Versi: 1
+  Γ£à PASS: Wallet deployer MEMILIKI role KEMENTERIAN_ROLE
+  Γ£à PASS: Supabase PostgreSQL terkoneksi (Tabel institutions ada)
+  Γ¥î FAIL: Vercel API /api/campus/list merespon HTTP 404
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 1: PENDAFTARAN KAMPUS BARU                            Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  ≡ƒôï Status awal kampus baru di blockchain: 0 (NotRegistered)
+  ≡ƒô¥ Mendaftarkan kampus via registerInstitutionDirectly (Super Admin bayar gas)...
+  Γ¥î FAIL: Gagal mendaftarkan kampus ke blockchain: superAdminContract.registerInstitutionDirectly is not a function
+  ≡ƒô¥ Mengirim metadata kampus ke Vercel API /api/campus/apply...
+  Γ¥î FAIL: Gagal kirim metadata ke Vercel API: Unexpected token 'T', "The page c"... is not valid JSON
+  Γ¥î FAIL: Data kampus ditemukan di Supabase PostgreSQL
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 2: CABUT IZIN & AKTIFKAN ULANG (Super Admin)          Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  ≡ƒöÆ Super Admin mencabut izin kampus (Deactivate)...
+  Γ¥î FAIL: Gagal deactivate: execution reverted: "CredBlock: Institusi bukan berstatus Approved/Pending" (action="estimateGas", data="0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003543726564426c6f636b3a20496e737469747573692062756b616e2062657273746174757320417070726f7665642f50656e64696e670000000000000000000000", reason="CredBlock: Institusi bukan berstatus Approved/Pending", transaction={ "data": "0x2143ca4900000000000000000000000070a1d89e019862ad27b4d5a610e00a3708a8e0f600000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000018556a6920436f62612050656e6361627574616e20497a696e0000000000000000", "from": "0xc6F375A0Fa07fF173696d2399755eBbD5e6186FD", "to": "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27" }, invocation=null, revert={ "args": [ "CredBlock: Institusi bukan berstatus Approved/Pending" ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.16.0)
+  ≡ƒöô Super Admin mengaktifkan ulang kampus (Reactivate)...
+  Γ¥î FAIL: Gagal reactivate: execution reverted: "CredBlock: Institusi tidak berstatus Deactivated" (action="estimateGas", data="0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003043726564426c6f636b3a20496e7374697475736920746964616b2062657273746174757320446561637469766174656400000000000000000000000000000000", reason="CredBlock: Institusi tidak berstatus Deactivated", transaction={ "data": "0xa354e08e00000000000000000000000070a1d89e019862ad27b4d5a610e00a3708a8e0f6", "from": "0xc6F375A0Fa07fF173696d2399755eBbD5e6186FD", "to": "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27" }, invocation=null, revert={ "args": [ "CredBlock: Institusi tidak berstatus Deactivated" ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.16.0)
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 3: CETAK HASH IJAZAH (Admin Kampus)                   Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  ≡ƒöÉ Hash SHA-256 mahasiswa: 0x63fb70174b1c464f1410e9a5710c22e542f5b80eaacff09eb8591d19dd991faf
+  Γ£à PASS: Hash format valid (66 karakter)
+  ≡ƒô¥ Mendaftarkan Super Admin sebagai kampus sementara untuk test storeHash...
+  ΓÜá∩╕Å Super Admin sudah terdaftar, lanjut...
+  ≡ƒôñ Menyimpan hash ijazah ke blockchain...
+  Γ¥î FAIL: Gagal storeHash: execution reverted: "CredBlock: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi." (action="estimateGas", data="0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004a43726564426c6f636b3a20416b736573206469746f6c616b2e2057616c6c65742062656c756d2064692d617070726f7665207365626167616920496e73746974757369207265736d692e00000000000000000000000000000000000000000000", reason="CredBlock: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi.", transaction={ "data": "0x7fe8888563fb70174b1c464f1410e9a5710c22e542f5b80eaacff09eb8591d19dd991faf", "from": "0xc6F375A0Fa07fF173696d2399755eBbD5e6186FD", "to": "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27" }, invocation=null, revert={ "args": [ "CredBlock: Akses ditolak. Wallet belum di-approve sebagai Institusi resmi." ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.16.0)
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 4: VERIFIKASI IJAZAH (HRD / Publik)                   Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  ≡ƒöì HRD memverifikasi ijazah Budi Santoso (data ASLI)...
+  Γ¥î isValid: false
+  ≡ƒÅ¢∩╕Å Nama Penerbit: 
+  ≡ƒÆ╝ Wallet Penerbit: 0x0000000000000000000000000000000000000000
+  Γ£à Dicabut (Revoked): false
+  Γ¥î FAIL: Ijazah ASLI terverifikasi VALID
+  Γ£à PASS: Ijazah TIDAK dalam status revoked
+  Γ¥î FAIL: Nama institusi penerbit terdeteksi: ""
+  ≡ƒöì HRD memverifikasi ijazah PALSU (IPK dimanipulasi 3.85 ΓåÆ 3.90)...
+  ≡ƒÜ¿ Hash Palsu: 0x9d225b10d967b37d4be509beb7eab0a338cee18c85152bc3c882dc03dbb41846
+  Γ£à PASS: Ijazah PALSU terdeteksi INVALID Γ£¿
+  Γ£à PASS: Publisher kosong (tidak ada penerbit)
+  ≡ƒöì HRD memverifikasi ijazah dengan TYPO NAMA (Budi Santoso ΓåÆ Budi Santosa)...
+  Γ£à PASS: Typo 1 huruf (oΓåÆa) langsung terdeteksi INVALID Γ£¿
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  TAHAP 5: VERIFIKASI SEMUA API ENDPOINTS                     Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  Γ¥î FAIL: API /api/campus/list gagal: Unexpected token 'T', "The page c"... is not valid JSON
+  Γ¥î FAIL: API /api/campus/[wallet] gagal: Unexpected token 'T', "The page c"... is not valid JSON
+  Γ¥î FAIL: API /api/hash/generate gagal: Unexpected token 'T', "The page c"... is not valid JSON
+
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+Γòæ  LAPORAN AKHIR SIMULASI                                      Γòæ
+ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+  ≡ƒôè Total Tes     : 20
+  Γ£à Berhasil (PASS): 8
+  Γ¥î Gagal (FAIL)   : 12
+
+  ΓÜá∩╕Å Ada 12 tes yang gagal. Perlu investigasi lebih lanjut.
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  ≡ƒº╣ Data simulasi dibersihkan dari Supabase.
