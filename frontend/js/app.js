@@ -55,8 +55,9 @@ const CONTRACT_ABI = [
 let provider;   // Object untuk berkomunikasi dengan jaringan blockchain
 let signer;     // Object yang merepresentasikan akun pengguna (admin)
 let contract;   // Instance smart contract yang bisa dipanggil dari JS
-let institutionsDB = {}; // Database profil kampus (dari JSON off-chain)
+let institutionsDB = {}; // Database profil kampus (dari Backend API / SQLite)
 let isConnecting = false; // Guard agar koneksi tidak dipanggil berulang kali
+const BACKEND_URL = "http://localhost:3001"; // Backend API Server
 
 // [SECURITY] RPC Failover URLs
 const RPC_URLS = [
@@ -96,14 +97,39 @@ async function getWorkingProvider() {
 // ============================================================
 
 /**
- * Menghubungkan frontend ke jaringan blockchain menggunakan Smart Wallet / Local Wallet.
- * Jika pengguna login via Google, wallet tersimpan di localStorage.
+ * [V3] Memuat profil kampus dari Backend API (SQLite database).
+ * Fallback ke file JSON statis jika backend tidak tersedia.
  */
 async function loadInstitutionsDB() {
     try {
+        // Coba dari Backend API terlebih dahulu
+        const response = await fetch(`${BACKEND_URL}/api/campus/list`);
+        const data = await response.json();
+        if (data.institutions && data.institutions.length > 0) {
+            // Konversi array ke object keyed by wallet address
+            data.institutions.forEach(inst => {
+                institutionsDB[inst.wallet] = {
+                    name: inst.name,
+                    shortName: inst.short_name,
+                    address: inst.address,
+                    accreditation: inst.akreditasi,
+                    website: inst.website,
+                    email: inst.email,
+                    sk: inst.sk
+                };
+            });
+            console.log(`\u2705 Loaded ${data.institutions.length} profil kampus dari Backend API`);
+            return;
+        }
+    } catch (err) {
+        console.warn('\u26a0\ufe0f Backend API tidak tersedia, fallback ke JSON statis:', err.message);
+    }
+
+    // Fallback ke file JSON statis
+    try {
         const response = await fetch('data/institutions.json');
         institutionsDB = await response.json();
-        console.log(`\u2705 Loaded ${Object.keys(institutionsDB).length} profil kampus dari database`);
+        console.log(`\u2705 Loaded ${Object.keys(institutionsDB).length} profil kampus dari JSON statis`);
     } catch (err) {
         console.warn('\u26a0\ufe0f Gagal memuat institutions.json:', err);
         institutionsDB = {};
@@ -359,8 +385,19 @@ async function loadKementerianDashboard() {
         let pendingCount = 0;
         let approvedCount = 0;
 
-        // Ambil pending DB dari simulasi B2B lokal
-        const localDB = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
+        // [V3] Ambil metadata kampus dari Backend API (SQLite)
+        let backendCampusDB = {};
+        try {
+            const resp = await fetch(`${BACKEND_URL}/api/campus/list`);
+            const data = await resp.json();
+            if (data.institutions) {
+                data.institutions.forEach(inst => {
+                    backendCampusDB[inst.wallet] = inst;
+                });
+            }
+        } catch (e) {
+            console.warn('Backend API tidak tersedia untuk dashboard, menggunakan data onchain saja.');
+        }
 
         for (let i = 0; i < applicants.length; i++) {
             const wallet = applicants[i];
@@ -382,8 +419,8 @@ async function loadKementerianDashboard() {
                 badgeHtml = '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-700 bg-red-100 rounded-full">Ditolak</span>';
             }
 
-            // Gabungkan metadata detail dari JSON (institutionsDB) atau pending lokal (localDB)
-            let detailData = localDB[wallet] || institutionsDB[wallet] || {};
+            // [V3] Gabungkan metadata dari Backend API atau institutionsDB statis
+            let detailData = backendCampusDB[wallet.toLowerCase()] || institutionsDB[wallet] || {};
             // [SECURITY FIX] Escape semua data yang masuk ke innerHTML untuk mencegah XSS
             let theName = escapeHtml(detailData.name || onchainName || "Institusi Anonim");
             let webEmail = '<span class="text-xs text-gray-400">Data legalitas offchain tidak ditemukan</span>';
@@ -446,13 +483,15 @@ window.actionApprove = async function (wallet) {
         await tx.wait();
 
         updateTxStatus('success', 'Institusi berhasil diapprove!');
-        // Pindahkan data JSON dr Antrian ke Data Resmi (Simulasi)
-        let localDB = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
-        if (localDB[wallet]) {
-            institutionsDB[wallet] = localDB[wallet];
-            institutionsDB[wallet].verified = true;
-            delete localDB[wallet];
-            localStorage.setItem('credblock_pending_db', JSON.stringify(localDB));
+        // [V3] Update status di Backend API (SQLite)
+        try {
+            await fetch(`${BACKEND_URL}/api/campus/${wallet}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'approved' })
+            });
+        } catch (e) {
+            console.warn('Gagal sync status ke backend:', e);
         }
 
         loadKementerianDashboard(); // reload table
@@ -487,51 +526,37 @@ window.actionReject = async function (wallet) {
 // ============================================================
 
 /**
- * Menghasilkan hash SHA-256 dari data mahasiswa.
+ * [V3] Menghasilkan hash SHA-256 dari data mahasiswa — SERVER-SIDE.
  * 
- * ALUR:
- * 1. Gabungkan semua data menjadi satu string dengan separator "|"
- *    Contoh: "Ahmad Fauzan|2024110001|Sistem Informasi|3.85|2000-05-15"
- * 2. Encode string menjadi bytes (UTF-8)
- * 3. Hash menggunakan SHA-256 (Web Crypto API bawaan browser)
- * 4. Konversi hasil hash ke format hex string (0x...)
- * 
- * KENAPA SHA-256?
- * → Standar kriptografi yang aman dan widely-used.
- * → Menghasilkan output 256-bit (32 bytes) = cocok dengan bytes32 di Solidity.
- * → Sifat one-way: tidak bisa dikembalikan ke data asli.
- * → Sifat deterministic: input yang sama selalu menghasilkan hash yang sama.
- * 
- * KENAPA pakai separator "|"?
- * → Agar data "Ali|12345" dan "Ali1|2345" menghasilkan hash berbeda.
- *   Tanpa separator, keduanya jadi "Ali12345" → hash sama → BAHAYA!
- * 
- * @param {string} nama - Nama lengkap mahasiswa
- * @param {string} nim - Nomor Induk Mahasiswa
- * @param {string} jurusan - Program studi
- * @param {string} ipk - Indeks Prestasi Kumulatif
- * @param {string} tanggalLahir - Tanggal lahir (format: YYYY-MM-DD)
- * @returns {string} Hash dalam format hex (0x...)
+ * PERUBAHAN V3:
+ * → Hash sekarang dikalkulasi di SERVER (Backend API), bukan di browser.
+ * → Mencegah kampus nakal memodifikasi skrip JS lokal.
+ * → Fallback ke client-side jika backend tidak tersedia.
  */
 async function generateHash(nama, nim, jurusan, ipk, tanggalLahir) {
-    // Langkah 1: Gabungkan data dengan separator "|"
+    // Coba server-side hashing terlebih dahulu
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/hash/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nama, nim, jurusan, ipk, tanggalLahir })
+        });
+        const data = await response.json();
+        if (data.success && data.hash) {
+            console.log('\u2705 Hash generated server-side');
+            return data.hash;
+        }
+    } catch (err) {
+        console.warn('\u26a0\ufe0f Backend API tidak tersedia, fallback ke client-side hashing:', err.message);
+    }
+
+    // Fallback: client-side hashing (Web Crypto API)
     const dataString = `${nama}|${nim}|${jurusan}|${ipk}|${tanggalLahir}`;
-    // [SECURITY FIX] Hapus console.log data mahasiswa (PII protection)
-
-    // Langkah 2: Encode string ke bytes (UTF-8)
     const encoder = new TextEncoder();
-    const data = encoder.encode(dataString);
-
-    // Langkah 3: Hash menggunakan SHA-256 (Web Crypto API)
-    // Web Crypto API adalah API bawaan browser modern untuk operasi kriptografi.
-    // Tidak perlu library eksternal!
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-
-    // Langkah 4: Konversi ArrayBuffer ke hex string
+    const dataBytes = encoder.encode(dataString);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", dataBytes);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = "0x" + hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-
-    // [SECURITY FIX] Jangan log hash ke console di production
     return hashHex;
 }
 

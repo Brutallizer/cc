@@ -36,7 +36,8 @@ const CONTRACT_ABI = [
 
 let provider;   // Koneksi ke blockchain (read-only)
 let contract;   // Instance smart contract
-let institutionsDB = {}; // Database profil kampus (dari JSON off-chain)
+let institutionsDB = {}; // Database profil kampus (dari Backend API / SQLite)
+const BACKEND_URL = "http://localhost:3001"; // Backend API Server
 
 // [SECURITY] RPC Failover URLs
 const RPC_URLS = [
@@ -67,13 +68,34 @@ function escapeHtml(text) {
  * → Cukup pakai provider (read-only) tanpa signer.
  */
 /**
- * Memuat profil kampus dari file JSON statis.
+ * [V3] Memuat profil kampus dari Backend API, fallback ke JSON statis.
  */
 async function loadInstitutionsDB() {
     try {
+        const response = await fetch(`${BACKEND_URL}/api/campus/list`);
+        const data = await response.json();
+        if (data.institutions && data.institutions.length > 0) {
+            data.institutions.forEach(inst => {
+                institutionsDB[inst.wallet] = {
+                    name: inst.name,
+                    shortName: inst.short_name,
+                    address: inst.address,
+                    accreditation: inst.akreditasi,
+                    website: inst.website,
+                    email: inst.email
+                };
+            });
+            console.log(`\u2705 Loaded ${data.institutions.length} profil kampus dari Backend API`);
+            return;
+        }
+    } catch (err) {
+        console.warn('\u26a0\ufe0f Backend API tidak tersedia, fallback ke JSON statis');
+    }
+
+    try {
         const response = await fetch('data/institutions.json');
         institutionsDB = await response.json();
-        console.log(`\u2705 Loaded ${Object.keys(institutionsDB).length} profil kampus`);
+        console.log(`\u2705 Loaded ${Object.keys(institutionsDB).length} profil kampus dari JSON`);
     } catch (err) {
         console.warn('\u26a0\ufe0f Gagal memuat institutions.json:', err);
         institutionsDB = {};

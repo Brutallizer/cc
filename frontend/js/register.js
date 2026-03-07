@@ -1,4 +1,5 @@
 const CONTRACT_ADDRESS = "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27"; // CredBlock V3 (UUPS Proxy) - Polygon Amoy
+const BACKEND_URL = "http://localhost:3001"; // Backend API Server
 const CONTRACT_ABI = [
     "function applyForRegistration(string memory _name)",
     "function institutions(address) view returns (string name, uint8 status)"
@@ -159,21 +160,28 @@ async function handleRegistration(e) {
         // Transaction Success 
         showToast('success', "Pendaftaran Berhasil Dikirim ke Jaringan!");
 
-        // Simpan sisa metadata legalitas offchain menggunakan nama localStorage sbg mock B2B Database
+        // [V3] Simpan metadata legalitas ke Backend API (SQLite) — BUKAN lagi localStorage!
         const pendingMetadata = {
             wallet: userAddress,
             name: name,
             shortName: document.getElementById('regShort').value,
             sk: document.getElementById('regSK').value,
             akreditasi: document.getElementById('regAkred').value,
-            web: document.getElementById('regWeb').value,
+            website: document.getElementById('regWeb').value,
             email: document.getElementById('regEmail').value,
             address: document.getElementById('regAddress').value
         };
 
-        let localQueue = JSON.parse(localStorage.getItem('credblock_pending_db') || "{}");
-        localQueue[userAddress] = pendingMetadata;
-        localStorage.setItem('credblock_pending_db', JSON.stringify(localQueue));
+        try {
+            await fetch(`${BACKEND_URL}/api/campus/apply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pendingMetadata)
+            });
+            console.log('✅ Metadata kampus tersimpan di database backend.');
+        } catch (dbErr) {
+            console.warn('⚠️ Gagal menyimpan metadata ke backend (non-critical):', dbErr);
+        }
 
         // Pindah layar ke pendaftaran sukses
         await checkStatus();
