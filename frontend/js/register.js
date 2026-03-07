@@ -173,14 +173,20 @@ async function handleRegistration(e) {
         };
 
         try {
-            await fetch(`${BACKEND_URL}/api/campus/apply`, {
+            const apiRes = await fetch(`${BACKEND_URL}/api/campus/apply`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingMetadata)
             });
+            
+            if (!apiRes.ok) {
+                const errData = await apiRes.json();
+                throw new Error(errData.error || `HTTP Error ${apiRes.status}`);
+            }
             console.log('✅ Metadata kampus tersimpan di database backend.');
         } catch (dbErr) {
-            console.warn('⚠️ Gagal menyimpan metadata ke backend (non-critical):', dbErr);
+            console.error('⚠️ FATAL: Gagal menyimpan metadata ke Supabase!', dbErr);
+            showToast('error', 'Blockchain sukses, tapi data detail gagal disimpan ke server. Hubungi Admin.');
         }
 
         // Pindah layar ke pendaftaran sukses
