@@ -14,34 +14,38 @@
 // KONFIGURASI
 // ============================================================
 
-const CONTRACT_ADDRESS = "0x1d05E0d9B7b691cc45bE37185ADB117Dc671B8a3"; // <--- CredBlock - Polygon Amoy
+const CONTRACT_ADDRESS = "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27"; // <--- CredBlock V3 (UUPS Proxy) - Polygon Amoy
 
 /**
- * ABI (Application Binary Interface) dari smart contract CredBlock.
+ * ABI (Application Binary Interface) dari smart contract CredBlock V3.
  * 
- * ABI adalah "kontrak" antara frontend dan smart contract.
- * Frontend perlu tahu fungsi apa saja yang tersedia di smart contract
- * dan parameter apa yang dibutuhkan.
- * 
- * KENAPA hanya 3 item?
- * → Kita hanya butuh fungsi yang akan dipanggil dari frontend.
- *   Tidak perlu menyertakan seluruh ABI dari compiler output.
+ * V3 UPGRADE:
+ * → Mengganti admin() tunggal → isKementerian() berbasis RBAC (Multi-Admin)
+ * → Menambahkan revokeHash() untuk mencabut ijazah
+ * → Menambahkan deactivateInstitution() / reactivateInstitution()
+ * → verifyHash() sekarang mengembalikan 4 nilai (termasuk isRevoked)
  */
 const CONTRACT_ABI = [
     // Info status & nama (Struct)
     "function institutions(address) view returns (string name, uint8 status)",
-    // Alamat admin (Kementerian)
-    "function admin() view returns (address)",
+    // Role Check (mengganti admin() tunggal)
+    "function isKementerian(address _addr) view returns (bool)",
     // Fungsi penyimpanan & verifikasi
     "function storeHash(bytes32 _hash)",
     "function storeMultipleHashes(bytes32[] calldata _hashes)",
-    "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher)",
+    "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher, bool isRevoked)",
     // Fungsi untuk Dashboard Kementerian
     "function getAllApplicants() view returns (address[])",
     "function approveInstitution(address _wallet)",
     "function rejectInstitution(address _wallet)",
+    // Fitur baru V3: Revocation & Deactivation
+    "function revokeHash(bytes32 _hash, string memory _reason)",
+    "function deactivateInstitution(address _wallet, string memory _reason)",
+    "function reactivateInstitution(address _wallet)",
+    "function getVersion() view returns (uint256)",
     // Event
-    "event HashStored(bytes32 indexed hash, address indexed publisher, uint256 timestamp)"
+    "event HashStored(bytes32 indexed hash, address indexed publisher, uint256 timestamp)",
+    "event HashRevoked(bytes32 indexed hash, address indexed revokedBy, string reason, uint256 timestamp)"
 ];
 
 // ============================================================
@@ -241,8 +245,8 @@ async function connectBlockchain(method = 'auto') {
         await loadInstitutionsDB();
 
         try {
-            const superAdminAddress = await contract.admin();
-            const isSuperAdmin = (userAddress.toLowerCase() === superAdminAddress.toLowerCase());
+            // V3: Cek role Kementerian via RBAC (bukan lagi alamat tunggal)
+            const isSuperAdmin = await contract.isKementerian(userAddress);
 
             const navInstEl = document.getElementById("navInstitutionName");
             const bannerEl = document.getElementById("bannerNotRegistered");
@@ -300,6 +304,7 @@ async function connectBlockchain(method = 'auto') {
                     if (instStatus === 0) msg = "Wallet belum didaftarkan sebagai institusi.";
                     if (instStatus === 1) msg = "Pendaftaran Institusi Anda masih PENDING dan menunggu persetujuan Kementerian.";
                     if (instStatus === 3) msg = "Pendaftaran Institusi Anda telah ditolak Kementerian.";
+                    if (instStatus === 4) msg = "Institusi Anda telah DINONAKTIFKAN oleh Kementerian.";
 
                     updateTxStatus("error", msg);
 
@@ -1090,9 +1095,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("load", async function () {
-    try {
-        await connectBlockchain('auto');
-    } catch (error) {
-        console.error("\u274c Gagal inisialisasi awal:", error.message);
+    // Pastikan auto-connect hanya berjalan di halaman Dashboard Admin (admin.html)
+    // atau di lingkungan di mana overlay login / dashboard panel masih ada.
+    const isDashboardPage = window.location.pathname.includes("admin.html") || document.getElementById('btnMetaMaskLogin') !== null;
+    
+    if (isDashboardPage) {
+        try {
+            await connectBlockchain('auto');
+        } catch (error) {
+            console.error("\u274c Gagal inisialisasi awal:", error.message);
+        }
     }
 });

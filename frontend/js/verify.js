@@ -20,15 +20,14 @@
 // KONFIGURASI
 // ============================================================
 
-const CONTRACT_ADDRESS = "0x1d05E0d9B7b691cc45bE37185ADB117Dc671B8a3"; // CredBlock - Polygon Amoy
+const CONTRACT_ADDRESS = "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27"; // CredBlock V3 (UUPS Proxy) - Polygon Amoy
 
 /**
  * ABI minimal — hanya fungsi yang dibutuhkan untuk verifikasi.
- * verifyHash adalah view function, artinya tidak mengubah state blockchain.
+ * V3: verifyHash sekarang mengembalikan 4 nilai (termasuk isRevoked).
  */
 const CONTRACT_ABI = [
-    // Fungsi verifyHash (mengembalikan tuple 3 nilai: bool, string, address)
-    "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher)"
+    "function verifyHash(bytes32 _hash) view returns (bool isValid, string memory institutionName, address publisher, bool isRevoked)"
 ];
 
 // ============================================================
@@ -207,9 +206,32 @@ document.getElementById("verifyForm").addEventListener("submit", async function 
         const isValid = result[0];
         const campusName = result[1];
         const publisher = result[2];
+        const isRevoked = result[3];
 
-        if (isValid) {
-            // \u2705 HASH DITEMUKAN \u2192 Ijazah VALID
+        if (isRevoked) {
+            // ⛔ HASH DITEMUKAN TAPI SUDAH DICABUT/DIANULIR
+            const profile = institutionsDB[publisher] || null;
+            let revokedProfileHtml = '';
+            if (profile) {
+                revokedProfileHtml = `
+                    <div class="mt-3">
+                        <span class="text-xs text-red-700 bg-red-100 px-2 py-1 rounded inline-block mb-1">Awalnya Diterbitkan Oleh:</span><br>
+                        <strong>${escapeHtml(profile.name)}</strong><br>
+                        <span class="text-[10px] text-gray-500 font-mono">${escapeHtml(publisher)}</span>
+                    </div>
+                `;
+            } else {
+                revokedProfileHtml = `
+                    <div class="mt-3">
+                        <span class="text-xs text-red-700 bg-red-100 px-2 py-1 rounded inline-block mb-1">Awalnya Diterbitkan Oleh:</span><br>
+                        <strong>${escapeHtml(campusName)}</strong><br>
+                        <span class="text-[10px] text-gray-500 font-mono">${escapeHtml(publisher)}</span>
+                    </div>
+                `;
+            }
+            showResult("invalid", `Sertifikat ini telah <strong>DICABUT / DIANULIR</strong> oleh penerbit atau Kementerian. Dokumen ini <strong>TIDAK LAGI SAH</strong>.${revokedProfileHtml}`, hash);
+        } else if (isValid) {
+            // ✅ HASH DITEMUKAN → Ijazah VALID
             // Cari profil lengkap dari JSON off-chain berdasarkan publisher address
             const profile = institutionsDB[publisher] || null;
 

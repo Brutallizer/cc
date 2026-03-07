@@ -1,4 +1,4 @@
-const CONTRACT_ADDRESS = "0x1d05E0d9B7b691cc45bE37185ADB117Dc671B8a3"; // CredBlock - Polygon Amoy
+const CONTRACT_ADDRESS = "0x830c4Eb9669adF6DeA3c1AeE702AB4f77a865d27"; // CredBlock V3 (UUPS Proxy) - Polygon Amoy
 const CONTRACT_ABI = [
     "function applyForRegistration(string memory _name)",
     "function institutions(address) view returns (string name, uint8 status)"
