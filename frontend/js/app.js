@@ -401,8 +401,8 @@ async function loadKementerianDashboard() {
 
         // Array blacklist untuk menyembunyikan kampus testing cacat (Universitas Gaming, dll)
         const hiddenWallets = [
-            "0xc1E58622E64c1F7c80529A887dbA52C063b2e7e4".toLowerCase(), // Universitas Gaming
-            "0x5d1e8E0aDA442fccAdcBA41dc695bAa59A727cbA".toLowerCase(), // Universitass ss
+            "0xc1E586e4E42044df94177bb1631674C51Fb2e7e4".toLowerCase(), // Universitas Gaming
+            "0x5d1e8E85a5d72662c5E75614301CD3CCFB727cbA".toLowerCase(), // Universitass ss
             "0xb26ff5ce8ffe6bc4623596ecb27d715cc58a03f8".toLowerCase(), // Universitas Simulasi E2E
             "0xc6f375a0fa07ff173696d2399755ebbd5e6186fd".toLowerCase()  // Kampus Admin Tester
         ];
