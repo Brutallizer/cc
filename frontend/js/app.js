@@ -1112,21 +1112,32 @@ function renderHistory() {
         const hashShort = item.hash.substring(0, 10) + "...";
         const txShort = item.txHash ? item.txHash.substring(0, 10) + "..." : "-";
 
+        let revokeBtnHtml = '';
+        let statusHtml = '';
+        if (item.isRevoked) {
+            revokeBtnHtml = `<span class="text-[10px] text-red-600 font-bold mt-1 bg-red-100 px-2 py-0.5 rounded border border-red-200">DIBATALKAN</span>`;
+            statusHtml = `<span class="text-[10px] text-red-500 font-medium mt-0.5 group-hover:hidden line-through">Sukses</span>`;
+        } else {
+            revokeBtnHtml = `<button onclick="window.actionRevoke('${item.hash}')" class="text-[10px] text-red-500 hover:text-white hover:bg-red-500 font-bold mt-1 bg-red-50 border border-red-200 px-2 py-0.5 rounded transition shadow-sm">Anulir (Revoke)</button>`;
+            statusHtml = `<span class="text-[10px] text-green-500 font-medium mt-0.5 group-hover:hidden outline-1 outline-green-100">Sukses</span>`;
+        }
+
         const cardHtml = `
-            <div class="px-3 py-2.5 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+            <div class="px-3 py-2.5 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors flex items-center justify-between group ${item.isRevoked ? 'opacity-60' : ''}">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full ${item.isRevoked ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center flex-shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-900 leading-tight">${item.nama}</p>
+                        <p class="text-xs font-semibold text-gray-900 leading-tight ${item.isRevoked ? 'line-through' : ''}">${item.nama}</p>
                         <p class="text-[10px] bg-clip-text text-transparent bg-gradient-to-r from-gray-500 to-gray-400 font-mono mt-0.5" title="${item.hash}">${hashShort}</p>
                     </div>
                 </div>
                 <div class="text-right flex flex-col items-end">
                     <span class="text-[10px] font-medium text-gray-400">${timeStr}</span>
                     <span class="text-[10px] text-primary-500 mt-0.5 hidden group-hover:block transition-all" title="${item.txHash}">📋 Lokal</span>
-                    <span class="text-[10px] text-green-500 font-medium mt-0.5 group-hover:hidden outline-1 outline-green-100">Sukses</span>
+                    ${statusHtml}
+                    ${revokeBtnHtml}
                 </div>
             </div>
         `;
@@ -1143,6 +1154,41 @@ if (btnClear) {
             renderHistory();
         }
     });
+}
+
+// ============================================================
+// FUNGSI REVOKE HASH (ANULIR IJAZAH SALAH INPUT)
+// ============================================================
+window.actionRevoke = async function(hash) {
+    const reason = prompt("Masukkan alasan pencabutan (contoh: 'Salah input nama', 'Ijazah dibatalkan'):");
+    if (!reason) return; // User membatalkan
+    
+    if (confirm(`PERINGATAN! Anda akan mencabut validitas untuk Ijazah ini secara permanen.\nHash: ${hash.substring(0, 15)}...\nLanjutkan?`)) {
+        try {
+            updateTxStatus('pending', 'Memproses pencabutan izin (Revoke) di blockchain...');
+            const tx = await contract.revokeHash(hash, reason);
+            
+            updateTxStatus('pending', 'Menunggu konfirmasi transaksi...');
+            await tx.wait();
+            
+            updateTxStatus('success', 'Ijazah berhasil dianulir (Revoked)!');
+            
+            // Tandai di history lokal agar muncul dicoret dan dilabeli DIBATALKAN
+            const history = getHistory();
+            const idx = history.findIndex(h => h.hash === hash);
+            if (idx > -1) {
+                history[idx].isRevoked = true;
+                localStorage.setItem("credblock_history", JSON.stringify(history));
+                renderHistory();
+            }
+        } catch (e) {
+            console.error(e);
+            let errMsg = 'Gagal mencabut hash.';
+            if (e.reason) errMsg = e.reason;
+            else if (e.message) errMsg = e.message.substring(0, 50);
+            updateTxStatus('error', errMsg);
+        }
+    }
 }
 
 // ============================================================
