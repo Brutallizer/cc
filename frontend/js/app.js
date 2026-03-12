@@ -822,6 +822,17 @@ document.getElementById("csvFile").addEventListener("change", function (e) {
                     return clean;
                 });
 
+                // Pastikan format tanggal (p[4]) sesuai dengan format HTML date input (YYYY-MM-DD)
+                // Jika dari CSV formatnya "DD/MM/YYYY", kita konversi dulu
+                let tglRaw = p[4];
+                if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(tglRaw)) {
+                    let parts = tglRaw.split("/");
+                    let dd = parts[0].padStart(2, '0');
+                    let mm = parts[1].padStart(2, '0');
+                    let yyyy = parts[2];
+                    p[4] = `${yyyy}-${mm}-${dd}`;
+                }
+
                 // Urutan: nama, nim, jurusan, ipk, tanggalLahir
                 const hash = await generateHash(p[0], p[1], p[2], p[3], p[4]);
                 currentCsvHashes.push(hash);
